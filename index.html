@@ -3,7 +3,7 @@
 <head>
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
-<title>体育考研·随机出题</title>
+<title>北师大体育考研·闪卡记忆</title>
 <style>
 @import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;700;900&display=swap');
 *{margin:0;padding:0;box-sizing:border-box;}
@@ -28,25 +28,50 @@ header{
   position:relative;z-index:1;
   background:linear-gradient(135deg,#1a0a0a 0%,#2d0f0f 40%,#1a1a1a 100%);
   border-bottom:2px solid rgba(217,48,37,.4);
-  padding:22px 16px 16px;text-align:center;
+  padding:14px 16px 10px;
   box-shadow:0 4px 30px rgba(217,48,37,.15);
 }
 header::after{
   content:'';position:absolute;bottom:-2px;left:10%;right:10%;
   height:2px;background:linear-gradient(90deg,transparent,rgba(255,160,0,.6),transparent);
 }
+.header-top{
+  display:flex;align-items:center;justify-content:space-between;flex-wrap:wrap;gap:10px;
+}
+.header-brand{
+  display:flex;align-items:center;gap:10px;
+}
+.logo-area{
+  width:44px;height:44px;border-radius:10px;
+  background:linear-gradient(135deg,rgba(217,48,37,.3),rgba(255,138,101,.2));
+  border:1.5px solid rgba(255,138,101,.3);
+  display:flex;align-items:center;justify-content:center;
+  font-size:22px;flex-shrink:0;
+}
+.brand-text{text-align:left;}
 header h1{
-  font-size:22px;font-weight:900;letter-spacing:3px;
+  font-size:17px;font-weight:900;letter-spacing:2px;
   background:linear-gradient(135deg,#f5f5f5,#ffcc80);
   -webkit-background-clip:text;-webkit-text-fill-color:transparent;
   background-clip:text;
 }
 header .subtitle{
-  font-size:12px;color:#a08080;margin-top:6px;letter-spacing:4px;
+  font-size:11px;color:#a08080;margin-top:2px;letter-spacing:2px;
 }
+.header-contact{flex-shrink:0;}
+.wechat-badge{
+  display:inline-flex;align-items:center;gap:4px;
+  background:rgba(7,193,96,.12);border:1px solid rgba(7,193,96,.25);
+  padding:6px 14px;border-radius:20px;
+  font-size:12px;color:#7bed9f;font-weight:600;
+  letter-spacing:.5px;
+}
+.wechat-icon{font-size:14px;}
+.wechat-id{color:#b8f5cd;}
 header .motto{
-  font-size:13px;color:#ff8a65;margin-top:8px;font-weight:700;
-  letter-spacing:2px;text-shadow:0 0 20px rgba(255,138,101,.3);
+  font-size:12px;color:#ff8a65;margin-top:8px;font-weight:700;
+  letter-spacing:2px;text-align:center;
+  text-shadow:0 0 20px rgba(255,138,101,.3);
 }
 
 /* ====== CONTAINER ====== */
@@ -171,10 +196,24 @@ header .motto{
 }
 </style>
 </head>
+</head>
 <body>
 <header>
-  <h1>🏋️ 体育考研</h1>
-  <div class="subtitle">运动训练学 · 运动生理学 · 学校体育学</div>
+  <div class="header-top">
+    <div class="header-brand">
+      <div class="logo-area" id="logoArea">📚</div>
+      <div class="brand-text">
+        <h1>专注北师大体育考研</h1>
+        <div class="subtitle">运动训练学 · 运动生理学 · 学校体育学</div>
+      </div>
+    </div>
+    <div class="header-contact">
+      <div class="wechat-badge">
+        <span class="wechat-icon">💬</span>
+        <span class="wechat-id">微信：Li_0909-YK</span>
+      </div>
+    </div>
+  </div>
   <div class="motto">🔥 练过的题 · 都会在考场上发光</div>
 </header>
 <div class="container">
@@ -191,6 +230,11 @@ header .motto{
       <span class="tag active" data-type="名词解释" onclick="toggleType(this)">名词解释 <span class="count" id="count-mingci">0</span></span>
     </div>
   </div>
+  <div class="mastery-dash">
+    <div class="mastery-item know"><span class="num" id="masteredCount">0</span><span class="lbl">🟢 已掌握</span></div>
+    <div class="mastery-item forget"><span class="num" id="forgotCount">0</span><span class="lbl">🟠 需复习</span></div>
+    <div class="mastery-item remain"><span class="num" id="remainCount">0</span><span class="lbl">⬜ 剩余</span></div>
+  </div>
   <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
   <div class="card fade-in" id="card">
     <div class="card-header">
@@ -200,18 +244,18 @@ header .motto{
       <span class="badge badge-id" id="badgeId">#0</span>
     </div>
     <div class="card-body" id="cardBody">
-      <div class="empty-text">点击下方按钮开始刷题 💪<br><br>空格 / Enter 快速出题</div>
+      <div class="empty-text">点击下方按钮开始刷题 💪<br><br><span style="font-size:13px;color:#908070;">🟢 认识 = 已会，跳过 ｜ 🟠 忘记 = 显示答案，回顾</span></div>
     </div>
-    <div class="card-footer">
-      <button class="btn btn-primary" id="btnNext" onclick="nextQuestion()">🎲 随机一题</button>
-      <button class="btn btn-outline" onclick="clearDone()">🔄 重置进度</button>
+    <div class="card-footer" id="cardFooter">
+      <button class="btn btn-know" id="btnKnow" onclick="handleKnow()">👀 认识</button>
+      <button class="btn btn-forget" id="btnForget" onclick="handleForget()">📖 忘记</button>
     </div>
   </div>
-  <div class="stats-bar">
-    <span>📊 已完成 <strong id="doneCount">0</strong> / <span id="totalCount">0</span></span>
-    <span>🏷️ 当前题库 <strong id="poolCount">0</strong> 题</span>
+  <div class="stats-bar" style="display:flex;justify-content:space-between;align-items:center;">
+    <span>📊 题库共 <strong id="totalCount">0</strong> 题</span>
+    <button class="btn-reset-small" onclick="clearAll()">🔄 重置进度</button>
   </div>
-  <div class="footer-note">⚡ 按空格或回车 · 持续训练</div>
+  <div class="footer-note">⌨️ A键=认识 · D键=忘记 · 空格=下一题</div>
 </div>
 <script>
 const questions = [
@@ -1508,52 +1552,220 @@ const questions = [
   {id:1290, sub:"学校体育学", type:"名词解释", chap:"", q:"体育教学原则"},
   {id:1291, sub:"学校体育学", type:"名词解释", chap:"", q:"大单元教学"},
   {id:1292, sub:"学校体育学", type:"名词解释", chap:"", q:"体育教学设计"}
-];
-// Total: 1293 questions
+];;
 
+// ====== ANSWER BANK ======
+// 自动从题目中解析内嵌答案（如 "绝对不应期:定义..."）
+// 你整理好答案后，在这里补充：answerBank[id] = "答案内容";
+const answerBank = {};
+(function parseAnswers() {
+  for (let q of questions) {
+    if (q.type !== '名词解释') continue;
+    // 匹配 "术语：定义" 或 "术语:定义" 或 "X.术语：定义"
+    const m = q.q.match(/^[\d.]*\s*(.+?)[：:](.+)$/);
+    if (m) {
+      const term = m[1].trim();
+      const def = m[2].trim();
+      // 只提取有明显定义的（term较短，def较长）
+      if (term.length <= 20 && def.length >= 8) {
+        answerBank[q.id] = def;
+      }
+    }
+  }
+})();
 
-
+// ====== STATE ======
 let selectedSubjects = ["运动训练学","运动生理学","学校体育学"];
 let selectedTypes = ["大题","名词解释"];
-let doneIds = new Set(JSON.parse(localStorage.getItem('quizDone') || '[]'));
+let masteredIds = new Set(JSON.parse(localStorage.getItem('quizMastered') || '[]'));
+let forgotIds = new Set(JSON.parse(localStorage.getItem('quizForgot') || '[]'));
 let currentQuestion = null;
+let answerVisible = false;
 
 const subFull = {"训练学":"运动训练学","生理学":"运动生理学","学校体育":"学校体育学"};
 const subColors = {"运动训练学":"#8ab4f8","运动生理学":"#f28b82","学校体育学":"#81c995"};
 
-function countByTypes() {
-  let dati = 0, mingci = 0;
-  for (let q of questions) {
-    if (!selectedSubjects.includes(q.sub)) continue;
-    if (q.type === "大题") dati++;
-    else mingci++;
-  }
-  document.getElementById('count-dati').textContent = dati;
-  document.getElementById('count-mingci').textContent = mingci;
-}
-
+// ====== POOL ======
 function getFiltered() {
   return questions.filter(q => 
     selectedSubjects.includes(q.sub) && selectedTypes.includes(q.type)
   );
 }
 
-function updateTotalCount() {
+function getActivePool() {
+  return getFiltered().filter(q => !masteredIds.has(q.id));
+}
+
+// ====== ANSWER ======
+function getAnswer(q) {
+  if (answerBank[q.id]) return answerBank[q.id];
+  if (q.type === '名词解释') return null; // 待补充
+  return null; // 大题待补充
+}
+
+// ====== COUNTS ======
+function countByTypes() {
+  let dati = 0, mingci = 0;
+  for (let q of questions) {
+    if (!selectedSubjects.includes(q.sub)) continue;
+    if (q.type === '大题') dati++;
+    else mingci++;
+  }
+  document.getElementById('count-dati').textContent = dati;
+  document.getElementById('count-mingci').textContent = mingci;
+}
+
+function updateStats() {
   const pool = getFiltered();
-  const doneInPool = pool.filter(q => doneIds.has(q.id)).length;
+  const active = getActivePool();
+  const mastered = pool.length - active.length;
+  const forgot = forgotIds.size;
+  const remaining = active.length;
+  
+  document.getElementById('masteredCount').textContent = mastered;
+  document.getElementById('forgotCount').textContent = forgot;
+  document.getElementById('remainCount').textContent = remaining;
   document.getElementById('totalCount').textContent = pool.length;
-  document.getElementById('poolCount').textContent = pool.length;
-  document.getElementById('doneCount').textContent = doneInPool;
-  const pct = pool.length > 0 ? Math.min(100, (doneInPool / pool.length * 100)) : 0;
+  
+  const pct = pool.length > 0 ? (mastered / pool.length * 100) : 0;
   document.getElementById('progressBar').style.width = pct.toFixed(1) + '%';
-  const btn = document.getElementById('btnNext');
-  if (pool.length > 0 && doneInPool >= pool.length) {
-    btn.textContent = '🏆 全部完成！';
-  } else {
-    btn.textContent = '🎲 随机一题';
+  
+  // Update footer buttons
+  if (active.length === 0 && pool.length > 0) {
+    document.getElementById('cardBody').innerHTML = '<div class="completion"><span class="icon">🏆</span>太强了！全部已掌握！<br><span style="font-size:15px;color:#e0d0c0;">换个科目继续刷，或重置进度</span></div>';
+    document.getElementById('cardFooter').innerHTML = '<button class="btn btn-outline" onclick="clearAll()">🔄 重置进度</button>';
   }
 }
 
+// ====== ACTIONS ======
+function pickQuestion() {
+  const active = getActivePool();
+  if (active.length === 0) {
+    currentQuestion = null;
+    answerVisible = false;
+    updateStats();
+    return;
+  }
+  const idx = Math.floor(Math.random() * active.length);
+  currentQuestion = active[idx];
+  answerVisible = false;
+  renderQuestion();
+  updateStats();
+}
+
+function renderQuestion() {
+  if (!currentQuestion) {
+    document.getElementById('cardBody').innerHTML = '<div class="empty-text">点击下方按钮开始刷题 💪</div>';
+    document.getElementById('cardFooter').innerHTML = `
+      <button class="btn btn-know" id="btnKnow" onclick="handleKnow()">👀 认识</button>
+      <button class="btn btn-forget" id="btnForget" onclick="handleForget()">📖 忘记</button>
+    `;
+    document.getElementById('badgeSub').textContent = '-';
+    document.getElementById('badgeType').textContent = '-';
+    document.getElementById('badgeChap').textContent = '-';
+    document.getElementById('badgeId').textContent = '#0';
+    return;
+  }
+  
+  const q = currentQuestion;
+  // Badges
+  document.getElementById('badgeSub').textContent = q.sub;
+  const c = subColors[q.sub] || '#888';
+  document.getElementById('badgeSub').style.background = c + '22';
+  document.getElementById('badgeSub').style.color = c;
+  document.getElementById('badgeType').textContent = q.type;
+  document.getElementById('badgeChap').textContent = q.chap || '通用';
+  document.getElementById('badgeId').textContent = '#' + q.id;
+  
+  // Question text
+  let displayQ = q.q;
+  // Clean up名词解释: remove inline definition if exists
+  if (q.type === '名词解释') {
+    const colonIdx = Math.max(displayQ.indexOf('：'), displayQ.indexOf(':'));
+    if (colonIdx > 0) {
+      const before = displayQ.substring(0, colonIdx);
+      if (before.length <= 20) {
+        displayQ = before.replace(/^[\d.]+\s*/, '');
+      }
+    }
+  }
+  
+  const answer = getAnswer(q);
+  const answerHTML = answer 
+    ? `<div class="answer-wrap" id="answerWrap"><div class="answer-box"><div class="answer-label">📖 参考答案</div>${answer}</div></div>`
+    : `<div class="answer-wrap" id="answerWrap"><div class="answer-box"><div class="answer-label">📝 答案待补充</div><div class="answer-empty">请对照教材复习该知识点<br>整理好答案后可补充到题库中</div></div></div>`;
+  
+  document.getElementById('cardBody').innerHTML = `
+    <div class="question-text fade-in">${displayQ}</div>
+    ${answerHTML}
+  `;
+  
+  // Footer buttons
+  document.getElementById('cardFooter').innerHTML = `
+    <button class="btn btn-know" id="btnKnow" onclick="handleKnow()">👀 认识</button>
+    <button class="btn btn-forget" id="btnForget" onclick="handleForget()">📖 忘记</button>
+  `;
+}
+
+function handleKnow() {
+  if (!currentQuestion) { pickQuestion(); return; }
+  masteredIds.add(currentQuestion.id);
+  forgotIds.delete(currentQuestion.id);
+  saveState();
+  // Animate
+  document.getElementById('card').classList.remove('fade-in');
+  void document.getElementById('card').offsetWidth;
+  document.getElementById('card').classList.add('fade-in');
+  currentQuestion = null;
+  pickQuestion();
+}
+
+function handleForget() {
+  if (!currentQuestion) { pickQuestion(); return; }
+  if (!answerVisible) {
+    // Reveal answer
+    answerVisible = true;
+    forgotIds.add(currentQuestion.id);
+    const wrap = document.getElementById('answerWrap');
+    if (wrap) wrap.classList.add('show');
+    // Change buttons
+    document.getElementById('cardFooter').innerHTML = `
+      <button class="btn btn-primary" onclick="handleNext()">➡️ 下一题</button>
+    `;
+    saveState();
+    updateStats();
+  }
+}
+
+function handleNext() {
+  if (!currentQuestion) { pickQuestion(); return; }
+  currentQuestion = null;
+  answerVisible = false;
+  pickQuestion();
+}
+
+function clearAll() {
+  if (!confirm('确定重置所有学习进度吗？')) return;
+  masteredIds.clear();
+  forgotIds.clear();
+  localStorage.removeItem('quizMastered');
+  localStorage.removeItem('quizForgot');
+  currentQuestion = null;
+  answerVisible = false;
+  document.getElementById('cardBody').innerHTML = '<div class="empty-text">进度已重置，重新起跑 🏃<br><br><span style="font-size:13px;color:#908070;">🟢 认识 = 已会，跳过 ｜ 🟠 忘记 = 显示答案，回顾</span></div>';
+  document.getElementById('cardFooter').innerHTML = `
+    <button class="btn btn-know" onclick="handleKnow()">👀 认识</button>
+    <button class="btn btn-forget" onclick="handleForget()">📖 忘记</button>
+  `;
+  updateStats();
+}
+
+function saveState() {
+  localStorage.setItem('quizMastered', JSON.stringify([...masteredIds]));
+  localStorage.setItem('quizForgot', JSON.stringify([...forgotIds]));
+}
+
+// ====== FILTER ======
 function toggleSub(el) {
   const label = el.dataset.sub;
   const full = subFull[label];
@@ -1563,7 +1775,13 @@ function toggleSub(el) {
     el.classList.add('active');
     selectedSubjects = [full];
   }
-  countByTypes(); updateTotalCount(); resetDisplay();
+  currentQuestion = null; answerVisible = false;
+  countByTypes(); updateStats();
+  document.getElementById('cardBody').innerHTML = '<div class="empty-text">已切换筛选，按按钮继续 💪<br><br><span style="font-size:13px;color:#908070;">🟢 认识 = 已会，跳过 ｜ 🟠 忘记 = 显示答案，回顾</span></div>';
+  document.getElementById('cardFooter').innerHTML = `
+    <button class="btn btn-know" onclick="handleKnow()">👀 认识</button>
+    <button class="btn btn-forget" onclick="handleForget()">📖 忘记</button>
+  `;
 }
 
 function toggleType(el) {
@@ -1573,71 +1791,47 @@ function toggleType(el) {
     el.classList.add('active');
     selectedTypes = [el.dataset.type];
   }
-  countByTypes(); updateTotalCount(); resetDisplay();
+  currentQuestion = null; answerVisible = false;
+  countByTypes(); updateStats();
+  document.getElementById('cardBody').innerHTML = '<div class="empty-text">已切换筛选，按按钮继续 💪<br><br><span style="font-size:13px;color:#908070;">🟢 认识 = 已会，跳过 ｜ 🟠 忘记 = 显示答案，回顾</span></div>';
+  document.getElementById('cardFooter').innerHTML = `
+    <button class="btn btn-know" onclick="handleKnow()">👀 认识</button>
+    <button class="btn btn-forget" onclick="handleForget()">📖 忘记</button>
+  `;
 }
 
-function resetDisplay() {
-  currentQuestion = null;
-  document.getElementById('badgeSub').textContent = '-';
-  document.getElementById('badgeType').textContent = '-';
-  document.getElementById('badgeChap').textContent = '-';
-  document.getElementById('badgeId').textContent = '#0';
-  document.getElementById('cardBody').innerHTML = '<div class="empty-text">已切换筛选条件，继续训练 💪</div>';
-}
-
-function nextQuestion() {
-  let pool = getFiltered();
-  if (pool.length === 0) {
-    document.getElementById('cardBody').innerHTML = '<div class="empty-text">当前筛选没有题目，调整一下 🎯</div>';
-    return;
-  }
-  const remaining = pool.filter(q => !doneIds.has(q.id));
-  if (remaining.length === 0) {
-    document.getElementById('cardBody').innerHTML = '<div class="empty-text" style="font-size:20px;line-height:2;color:#ffcc80;">🏆🏆🏆 太强了！<br>当前题库全部通关！<br><br>换个科目继续 <span style="font-size:24px;">🔥</span></div>';
-    document.getElementById('btnNext').textContent = '🏆 全部完成！';
-    document.getElementById('progressBar').style.width = '100%';
-    return;
-  }
-  const idx = Math.floor(Math.random() * remaining.length);
-  currentQuestion = remaining[idx];
-  doneIds.add(currentQuestion.id);
-  localStorage.setItem('quizDone', JSON.stringify([...doneIds]));
-
-  document.getElementById('cardBody').innerHTML = '<div class="question-text fade-in">' + currentQuestion.q + '</div>';
-  document.getElementById('badgeSub').textContent = currentQuestion.sub;
-  const c = subColors[currentQuestion.sub] || '#888';
-  document.getElementById('badgeSub').style.background = c + '22';
-  document.getElementById('badgeSub').style.color = c;
-  document.getElementById('badgeType').textContent = currentQuestion.type;
-  document.getElementById('badgeChap').textContent = currentQuestion.chap || '通用';
-  document.getElementById('badgeId').textContent = '#' + (doneIds.size);
-  updateTotalCount();
-}
-
-function clearDone() {
-  if (!confirm('确定重置所有进度吗？')) return;
-  doneIds.clear();
-  localStorage.removeItem('quizDone');
-  currentQuestion = null;
-  document.getElementById('cardBody').innerHTML = '<div class="empty-text">进度已重置，重新起跑 🏃</div>';
-  updateTotalCount();
-  document.getElementById('btnNext').textContent = '🎲 随机一题';
-}
-
+// ====== KEYBOARD ======
 document.addEventListener('keydown', function(e) {
+  if (e.target.tagName === 'INPUT' || e.target.tagName === 'TEXTAREA') return;
+  if (e.key === 'a' || e.key === 'A' || e.key === 'ArrowLeft') {
+    e.preventDefault();
+    if (answerVisible) handleNext();
+    else handleKnow();
+  }
+  if (e.key === 'd' || e.key === 'D' || e.key === 'ArrowRight') {
+    e.preventDefault();
+    if (!answerVisible) handleForget();
+    else handleNext();
+  }
   if (e.key === ' ' || e.key === 'Enter') {
     e.preventDefault();
-    nextQuestion();
+    if (answerVisible) handleNext();
+    else pickQuestion();
   }
 });
 
+// ====== INIT ======
 countByTypes();
-updateTotalCount();
-if (doneIds.size > 0) {
+updateStats();
+if (masteredIds.size > 0 || forgotIds.size > 0) {
   const pool = getFiltered();
-  const doneInPool = pool.filter(function(q) { return doneIds.has(q.id); }).length;
-  document.getElementById('cardBody').innerHTML = '<div class="empty-text">上次训练到第 ' + doneInPool + ' 题，继续 💪</div>';
+  const mastered = pool.filter(q => masteredIds.has(q.id)).length;
+  const forgot = pool.filter(q => forgotIds.has(q.id)).length;
+  if (mastered + forgot > 0) {
+    document.getElementById('cardBody').innerHTML = `<div class="empty-text">欢迎回来！<br>已掌握 ${mastered} 题 · 待复习 ${forgot} 题<br>继续加油 💪</div>`;
+  }
 }
+
 </script>
 </body>
 </html>
