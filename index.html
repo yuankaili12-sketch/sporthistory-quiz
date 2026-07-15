@@ -1,0 +1,1643 @@
+<!DOCTYPE html>
+<html lang="zh-CN">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width,initial-scale=1.0,maximum-scale=1.0,user-scalable=no">
+<title>体育考研·随机出题</title>
+<style>
+@import url('https://fonts.googleapis.com/css2?family=Noto+Sans+SC:wght@400;600;700;900&display=swap');
+*{margin:0;padding:0;box-sizing:border-box;}
+body{
+  font-family:'Noto Sans SC',-apple-system,BlinkMacSystemFont,"PingFang SC","Microsoft YaHei",sans-serif;
+  background:#0a0e17;min-height:100vh;display:flex;flex-direction:column;
+  color:#e8e8e8;
+}
+
+/* ====== BG ====== */
+body::before{
+  content:'';position:fixed;inset:0;z-index:0;
+  background:
+    radial-gradient(ellipse 80% 50% at 50% 0%, rgba(217,48,37,.12) 0%, transparent 70%),
+    radial-gradient(ellipse 60% 40% at 20% 80%, rgba(255,160,0,.06) 0%, transparent 60%),
+    radial-gradient(ellipse 50% 40% at 80% 70%, rgba(26,115,232,.05) 0%, transparent 50%);
+  pointer-events:none;
+}
+
+/* ====== HEADER ====== */
+header{
+  position:relative;z-index:1;
+  background:linear-gradient(135deg,#1a0a0a 0%,#2d0f0f 40%,#1a1a1a 100%);
+  border-bottom:2px solid rgba(217,48,37,.4);
+  padding:22px 16px 16px;text-align:center;
+  box-shadow:0 4px 30px rgba(217,48,37,.15);
+}
+header::after{
+  content:'';position:absolute;bottom:-2px;left:10%;right:10%;
+  height:2px;background:linear-gradient(90deg,transparent,rgba(255,160,0,.6),transparent);
+}
+header h1{
+  font-size:22px;font-weight:900;letter-spacing:3px;
+  background:linear-gradient(135deg,#f5f5f5,#ffcc80);
+  -webkit-background-clip:text;-webkit-text-fill-color:transparent;
+  background-clip:text;
+}
+header .subtitle{
+  font-size:12px;color:#a08080;margin-top:6px;letter-spacing:4px;
+}
+header .motto{
+  font-size:13px;color:#ff8a65;margin-top:8px;font-weight:700;
+  letter-spacing:2px;text-shadow:0 0 20px rgba(255,138,101,.3);
+}
+
+/* ====== CONTAINER ====== */
+.container{position:relative;z-index:1;flex:1;max-width:660px;margin:0 auto;width:100%;padding:16px;}
+
+/* ====== FILTER ====== */
+.filter-bar{
+  background:rgba(255,255,255,.04);backdrop-filter:blur(12px);
+  border:1px solid rgba(255,255,255,.08);border-radius:14px;
+  padding:14px 16px;margin-bottom:14px;
+}
+.filter-row{display:flex;flex-wrap:wrap;gap:6px;margin-bottom:10px;}
+.filter-row:last-child{margin-bottom:0;}
+.filter-label{font-size:12px;color:#a09090;font-weight:600;width:100%;margin-bottom:3px;letter-spacing:1px;}
+.tag{
+  display:inline-flex;align-items:center;gap:4px;padding:6px 16px;border-radius:20px;
+  font-size:13px;font-weight:600;cursor:pointer;transition:all .25s;user-select:none;
+  border:1.5px solid rgba(255,255,255,.12);background:rgba(255,255,255,.04);color:#c0b0b0;
+}
+.tag:hover{border-color:#ff8a65;color:#ff8a65;background:rgba(255,138,101,.08);}
+.tag.active{
+  background:linear-gradient(135deg,rgba(217,48,37,.25),rgba(255,138,101,.15));
+  border-color:#d93025;color:#ff8a65;box-shadow:0 0 20px rgba(217,48,37,.15);
+}
+.tag .count{font-size:11px;opacity:.6;}
+
+/* ====== PROGRESS ====== */
+.progress-wrap{
+  height:8px;background:rgba(255,255,255,.06);border-radius:4px;
+  margin-bottom:14px;overflow:hidden;position:relative;
+}
+.progress-bar{
+  height:100%;
+  background:linear-gradient(90deg,#d93025,#ff8a65,#ffcc80);
+  border-radius:4px;transition:width .5s ease;
+  position:relative;
+}
+.progress-bar::after{
+  content:'';position:absolute;right:0;top:0;bottom:0;width:20px;
+  background:linear-gradient(90deg,transparent,rgba(255,255,255,.3));
+  border-radius:4px;
+}
+
+/* ====== CARD ====== */
+.card{
+  background:rgba(255,255,255,.04);backdrop-filter:blur(16px);
+  border:1px solid rgba(255,255,255,.08);border-radius:18px;
+  overflow:hidden;min-height:320px;display:flex;flex-direction:column;
+  box-shadow:0 8px 40px rgba(0,0,0,.3);
+}
+.card-header{
+  display:flex;align-items:center;gap:8px;padding:14px 18px;
+  border-bottom:1px solid rgba(255,255,255,.06);flex-wrap:wrap;
+}
+.badge{font-size:11px;padding:4px 12px;border-radius:10px;font-weight:700;letter-spacing:.5px;}
+.badge-sub{background:rgba(26,115,232,.2);color:#8ab4f8;}
+.badge-type{background:rgba(217,48,37,.2);color:#f28b82;}
+.badge-chap{background:rgba(19,115,51,.2);color:#81c995;}
+.badge-id{background:rgba(255,255,255,.05);color:#888;font-weight:400;}
+.card-body{
+  flex:1;padding:32px 22px 8px;display:flex;flex-direction:column;
+  align-items:center;justify-content:center;min-height:220px;
+}
+.question-text{
+  font-size:20px;line-height:1.8;text-align:center;color:#f0e8e0;
+  max-width:100%;word-break:break-word;padding:8px 0;
+  font-weight:600;
+}
+.empty-text{color:#807070;font-size:15px;text-align:center;line-height:1.8;}
+.card-footer{
+  padding:14px 18px;border-top:1px solid rgba(255,255,255,.06);
+  display:flex;gap:10px;justify-content:center;flex-wrap:wrap;
+}
+
+/* ====== BUTTONS ====== */
+.btn{
+  display:inline-flex;align-items:center;justify-content:center;gap:8px;
+  padding:12px 32px;border:none;border-radius:25px;
+  font-size:15px;font-weight:700;cursor:pointer;transition:all .25s;
+  letter-spacing:1px;
+}
+.btn-primary{
+  background:linear-gradient(135deg,#d93025,#ff6d00);
+  color:#fff;box-shadow:0 4px 20px rgba(217,48,37,.3);
+}
+.btn-primary:hover{
+  transform:translateY(-2px);box-shadow:0 6px 28px rgba(217,48,37,.45);
+}
+.btn-primary:active{transform:translateY(0);}
+.btn-outline{
+  background:rgba(255,255,255,.04);color:#b0a0a0;
+  border:1.5px solid rgba(255,255,255,.1);
+}
+.btn-outline:hover{
+  border-color:#ff8a65;color:#ff8a65;background:rgba(255,138,101,.08);
+}
+
+/* ====== STATS ====== */
+.stats-bar{
+  display:flex;justify-content:space-between;padding:14px 4px 6px;
+  font-size:12px;color:#706060;letter-spacing:.5px;
+}
+.stats-bar strong{color:#e0d0c0;}
+.stats-bar .highlight{color:#ff8a65;}
+
+/* ====== FOOTER ====== */
+.footer-note{
+  text-align:center;font-size:11px;color:#504040;padding:8px 0 16px;
+  letter-spacing:1px;
+}
+
+.fade-in{animation:fadeIn .4s ease both;}
+@keyframes fadeIn{from{opacity:0;transform:translateY(15px)}to{opacity:1;transform:translateY(0)}}
+
+@media(max-width:480px){
+  .question-text{font-size:18px;}
+  .card-body{padding:24px 16px 8px;}
+  .filter-bar{padding:10px 12px;}
+  header h1{font-size:19px;}
+  .tag{font-size:12px;padding:5px 12px;}
+  .btn{padding:10px 24px;font-size:14px;}
+}
+</style>
+</head>
+<body>
+<header>
+  <h1>🏋️ 体育考研</h1>
+  <div class="subtitle">运动训练学 · 运动生理学 · 学校体育学</div>
+  <div class="motto">🔥 练过的题 · 都会在考场上发光</div>
+</header>
+<div class="container">
+  <div class="filter-bar">
+    <div class="filter-row">
+      <div class="filter-label">📌 科目</div>
+      <span class="tag tag-sub-1 active" data-sub="运动训练学" onclick="toggleSub(this)">训练学</span>
+      <span class="tag tag-sub-2 active" data-sub="运动生理学" onclick="toggleSub(this)">生理学</span>
+      <span class="tag tag-sub-3 active" data-sub="学校体育学" onclick="toggleSub(this)">学校体育</span>
+    </div>
+    <div class="filter-row">
+      <div class="filter-label">📖 题型</div>
+      <span class="tag active" data-type="大题" onclick="toggleType(this)">大题 <span class="count" id="count-dati">0</span></span>
+      <span class="tag active" data-type="名词解释" onclick="toggleType(this)">名词解释 <span class="count" id="count-mingci">0</span></span>
+    </div>
+  </div>
+  <div class="progress-wrap"><div class="progress-bar" id="progressBar"></div></div>
+  <div class="card fade-in" id="card">
+    <div class="card-header">
+      <span class="badge badge-sub" id="badgeSub">-</span>
+      <span class="badge badge-type" id="badgeType">-</span>
+      <span class="badge badge-chap" id="badgeChap">-</span>
+      <span class="badge badge-id" id="badgeId">#0</span>
+    </div>
+    <div class="card-body" id="cardBody">
+      <div class="empty-text">点击下方按钮开始刷题 💪<br><br>空格 / Enter 快速出题</div>
+    </div>
+    <div class="card-footer">
+      <button class="btn btn-primary" id="btnNext" onclick="nextQuestion()">🎲 随机一题</button>
+      <button class="btn btn-outline" onclick="clearDone()">🔄 重置进度</button>
+    </div>
+  </div>
+  <div class="stats-bar">
+    <span>📊 已完成 <strong id="doneCount">0</strong> / <span id="totalCount">0</span></span>
+    <span>🏷️ 当前题库 <strong id="poolCount">0</strong> 题</span>
+  </div>
+  <div class="footer-note">⚡ 按空格或回车 · 持续训练</div>
+</div>
+<script>
+const questions = [
+  {id:0, sub:"运动训练学", type:"大题", chap:"第一章", q:"运动训练的竞技价值？"},
+  {id:1, sub:"运动训练学", type:"大题", chap:"第一章", q:"竞技体育的社会价值？"},
+  {id:2, sub:"运动训练学", type:"大题", chap:"第一章", q:"运动训练学任务？"},
+  {id:3, sub:"运动训练学", type:"大题", chap:"第一章", q:"不同层级的运动训练理论体系？"},
+  {id:4, sub:"运动训练学", type:"大题", chap:"第一章", q:"竞技运动项目的分类及项群体系的构成？"},
+  {id:5, sub:"运动训练学", type:"大题", chap:"第一章", q:"竞技体育活动组成？"},
+  {id:6, sub:"运动训练学", type:"大题", chap:"第一章", q:"运动训练学理论？"},
+  {id:7, sub:"运动训练学", type:"大题", chap:"第一章", q:"运动训练学特征？"},
+  {id:8, sub:"运动训练学", type:"大题", chap:"第一章", q:"专项训练理论特点？"},
+  {id:9, sub:"运动训练学", type:"大题", chap:"第一章", q:"项群训练理论应用？"},
+  {id:10, sub:"运动训练学", type:"大题", chap:"第一章", q:"运动训练项目分类？"},
+  {id:11, sub:"运动训练学", type:"大题", chap:"第一章", q:"运动成绩影响因素？"},
+  {id:12, sub:"运动训练学", type:"大题", chap:"第一章", q:"运动训练计划分类？"},
+  {id:13, sub:"运动训练学", type:"大题", chap:"第一章", q:"运动训练方法的多维分类体系？"},
+  {id:14, sub:"运动训练学", type:"大题", chap:"第一章", q:"常用训练方法及应用？"},
+  {id:15, sub:"运动训练学", type:"大题", chap:"第一章", q:"系统控制时间，训练方法和具体操作性训练方法？"},
+  {id:16, sub:"运动训练学", type:"大题", chap:"第一章", q:"模式训练法应用？"},
+  {id:17, sub:"运动训练学", type:"大题", chap:"第一章", q:"程序训练法应用？"},
+  {id:18, sub:"运动训练学", type:"大题", chap:"第一章", q:"比赛训练法的特点？"},
+  {id:19, sub:"运动训练学", type:"大题", chap:"第一章", q:"运动训练过程及分步？"},
+  {id:20, sub:"运动训练学", type:"大题", chap:"第一章", q:"训练目标的在训练过程中的作用？"},
+  {id:21, sub:"运动训练学", type:"大题", chap:"第一章", q:"运动训练负荷的构成？"},
+  {id:22, sub:"运动训练学", type:"大题", chap:"第一章", q:"负荷强度是运动负荷的核心？"},
+  {id:23, sub:"运动训练学", type:"大题", chap:"第一章", q:"竞技强度与竞技水平的关系？"},
+  {id:24, sub:"运动训练学", type:"大题", chap:"第一章", q:"训练目标的内容？"},
+  {id:25, sub:"运动训练学", type:"大题", chap:"第一章", q:"训练目标的适宜度？"},
+  {id:26, sub:"运动训练学", type:"大题", chap:"第一章", q:"运动训练计划的基本内容？"},
+  {id:27, sub:"运动训练学", type:"大题", chap:"第一章", q:"训练负荷基本理念？"},
+  {id:28, sub:"运动训练学", type:"大题", chap:"第一章", q:"竞技能力结构模型及作用？"},
+  {id:29, sub:"运动训练学", type:"大题", chap:"第一章", q:"运动员竞技能力的整体性和个体性？"},
+  {id:30, sub:"运动训练学", type:"大题", chap:"第一章", q:"训练负荷控制的必要性？"},
+  {id:31, sub:"运动训练学", type:"大题", chap:"第一章", q:"运动训练过程的组织实施？"},
+  {id:32, sub:"运动训练学", type:"大题", chap:"一运动员起始状态的诊断", q:"状态诊断的作用及内容？"},
+  {id:33, sub:"运动训练学", type:"大题", chap:"二运动员训练目标的建立", q:"训练目标的作用及内容和适宜度？"},
+  {id:34, sub:"运动训练学", type:"大题", chap:"二运动员训练目标的建立", q:"，运动训练计划的制定与实施？"},
+  {id:35, sub:"运动训练学", type:"大题", chap:"二运动员训练目标的建立", q:"训练计划的分类基本内容？"},
+  {id:36, sub:"运动训练学", type:"大题", chap:"二运动员训练目标的建立", q:"运动训练计划的组织实施与检查评定？"},
+  {id:37, sub:"运动训练学", type:"大题", chap:"第二章", q:"运动员竞技能力构成变化与表现的基本规律？"},
+  {id:38, sub:"运动训练学", type:"大题", chap:"一运动员竞技能力的构成规律", q:"运动员竞技能力构成规律的表现形式？"},
+  {id:39, sub:"运动训练学", type:"大题", chap:"二运动员竞技能力的变化规律", q:"运动员竞技能力表现规律的表现形式？"},
+  {id:40, sub:"运动训练学", type:"大题", chap:"二运动员竞技能力的变化规律", q:"运动员竞技能力变化的影响因素？"},
+  {id:41, sub:"运动训练学", type:"大题", chap:"二运动员竞技能力的变化规律", q:"我国运动训练原则理论体系的演化？"},
+  {id:42, sub:"运动训练学", type:"大题", chap:"二运动员竞技能力的变化规律", q:"基于辩证协同关系的主要特点？"},
+  {id:43, sub:"运动训练学", type:"大题", chap:"二运动员竞技能力的变化规律", q:"三从一大原则？"},
+  {id:44, sub:"运动训练学", type:"大题", chap:"二运动员竞技能力的变化规律", q:"导向激励与健康保障原则？"},
+  {id:45, sub:"运动训练学", type:"大题", chap:"二运动员竞技能力的变化规律", q:"竞技需要与区别对待原则？"},
+  {id:46, sub:"运动训练学", type:"大题", chap:"二运动员竞技能力的变化规律", q:"系统训练与周期安排原则？"},
+  {id:47, sub:"运动训练学", type:"大题", chap:"二运动员竞技能力的变化规律", q:"时宜负荷与适时恢复原则？"},
+  {id:48, sub:"运动训练学", type:"大题", chap:"第三章", q:"体能的意义？"},
+  {id:49, sub:"运动训练学", type:"大题", chap:"第三章", q:"体能的基本要求？"},
+  {id:50, sub:"运动训练学", type:"大题", chap:"第三章", q:"力量素质的基本要求？"},
+  {id:51, sub:"运动训练学", type:"大题", chap:"第三章", q:"体能训练的直接任务？"},
+  {id:52, sub:"运动训练学", type:"大题", chap:"第三章", q:"如何理解力量为运动之源？"},
+  {id:53, sub:"运动训练学", type:"大题", chap:"第三章", q:"力量素质的影响因素？"},
+  {id:54, sub:"运动训练学", type:"大题", chap:"第三章", q:"力量训练的基本方法与负荷控制？"},
+  {id:55, sub:"运动训练学", type:"大题", chap:"第三章", q:"发展最大力量的途径和方法？"},
+  {id:56, sub:"运动训练学", type:"大题", chap:"第三章", q:"发展快速力量的途径和方法？"},
+  {id:57, sub:"运动训练学", type:"大题", chap:"第三章", q:"发展力量耐力的重要途径及常用方法？"},
+  {id:58, sub:"运动训练学", type:"大题", chap:"第三章", q:"速度素质的分类？"},
+  {id:59, sub:"运动训练学", type:"大题", chap:"第三章", q:"速度素质在不同项群中的作用特征及其任务？"},
+  {id:60, sub:"运动训练学", type:"大题", chap:"第三章", q:"速度素质的影响因素？"},
+  {id:61, sub:"运动训练学", type:"大题", chap:"第三章", q:"速度素质的基本要求？"},
+  {id:62, sub:"运动训练学", type:"大题", chap:"第三章", q:"速度素质的训练方法及负荷控制？"},
+  {id:63, sub:"运动训练学", type:"大题", chap:"第三章", q:"反应速度，动作，速度移动速度？"},
+  {id:64, sub:"运动训练学", type:"大题", chap:"第三章", q:"耐力的分类？"},
+  {id:65, sub:"运动训练学", type:"大题", chap:"第三章", q:"耐力素质的作用？"},
+  {id:66, sub:"运动训练学", type:"大题", chap:"第三章", q:"不同项目专项耐力的不同（结合专项说明其耐力特点）？"},
+  {id:67, sub:"运动训练学", type:"大题", chap:"第三章", q:"耐力的基本要求？"},
+  {id:68, sub:"运动训练学", type:"大题", chap:"第三章", q:"有氧和无氧的区分？"},
+  {id:69, sub:"运动训练学", type:"大题", chap:"第三章", q:"耐力的影响因素？"},
+  {id:70, sub:"运动训练学", type:"大题", chap:"第三章", q:"耐力素质的基本训练方法与复合控制？"},
+  {id:71, sub:"运动训练学", type:"大题", chap:"第三章", q:"协调素质的意义？"},
+  {id:72, sub:"运动训练学", type:"大题", chap:"第三章", q:"协调素质训练？"},
+  {id:73, sub:"运动训练学", type:"大题", chap:"第三章", q:"反应能力的训练？"},
+  {id:74, sub:"运动训练学", type:"大题", chap:"第三章", q:"平衡能力的训练？"},
+  {id:75, sub:"运动训练学", type:"大题", chap:"第三章", q:"节奏能力的训练？"},
+  {id:76, sub:"运动训练学", type:"大题", chap:"第三章", q:"空间定向能力的训练？"},
+  {id:77, sub:"运动训练学", type:"大题", chap:"第三章", q:"时间感知能力的训练？"},
+  {id:78, sub:"运动训练学", type:"大题", chap:"第三章", q:"距离感知能力的训练？"},
+  {id:79, sub:"运动训练学", type:"大题", chap:"第三章", q:"专门感觉能力的训练？"},
+  {id:80, sub:"运动训练学", type:"大题", chap:"第三章", q:"协调素质的影响因素？"},
+  {id:81, sub:"运动训练学", type:"大题", chap:"第三章", q:"柔韧素质的训练？"},
+  {id:82, sub:"运动训练学", type:"大题", chap:"第三章", q:"PNF拉伸？"},
+  {id:83, sub:"运动训练学", type:"大题", chap:"第三章", q:"柔韧素质的分类？"},
+  {id:84, sub:"运动训练学", type:"大题", chap:"第三章", q:"柔韧素质的基本要求？"},
+  {id:85, sub:"运动训练学", type:"大题", chap:"第三章", q:"柔韧素质的影响因素？"},
+  {id:86, sub:"运动训练学", type:"大题", chap:"第三章", q:"灵敏素质的训练？"},
+  {id:87, sub:"运动训练学", type:"大题", chap:"第三章", q:"灵敏素质的分类？"},
+  {id:88, sub:"运动训练学", type:"大题", chap:"第三章", q:"灵敏素质的影响因素？"},
+  {id:89, sub:"运动训练学", type:"大题", chap:"第三章", q:"灵敏素质的基本要求？"},
+  {id:90, sub:"运动训练学", type:"大题", chap:"第三章", q:"运动技术的构成？"},
+  {id:91, sub:"运动训练学", type:"大题", chap:"第三章", q:"运动技术的影响因素？"},
+  {id:92, sub:"运动训练学", type:"大题", chap:"第三章", q:"运动技术的基本特征？"},
+  {id:93, sub:"运动训练学", type:"大题", chap:"第三章", q:"运动技术原理？"},
+  {id:94, sub:"运动训练学", type:"大题", chap:"第三章", q:"运动技术基本训练方法？"},
+  {id:95, sub:"运动训练学", type:"大题", chap:"第三章", q:"选择技术训练方法遵循的要求？"},
+  {id:96, sub:"运动训练学", type:"大题", chap:"第三章", q:"运动训练技术的基本要求？"},
+  {id:97, sub:"运动训练学", type:"大题", chap:"第三章", q:"技术风格的影响因素？"},
+  {id:98, sub:"运动训练学", type:"大题", chap:"第三章", q:"运动技术创新的目的？"},
+  {id:99, sub:"运动训练学", type:"大题", chap:"第四章", q:"运动战术定义及其构成？"},
+  {id:100, sub:"运动训练学", type:"大题", chap:"第四章", q:"战术的分类？"},
+  {id:101, sub:"运动训练学", type:"大题", chap:"第四章", q:"战术方案的基本内容？"},
+  {id:102, sub:"运动训练学", type:"大题", chap:"第四章", q:"制定战术方案的注意事项？"},
+  {id:103, sub:"运动训练学", type:"大题", chap:"第四章", q:"运动员战术能力的影响因素？"},
+  {id:104, sub:"运动训练学", type:"大题", chap:"第四章", q:"战术训练方法？"},
+  {id:105, sub:"运动训练学", type:"大题", chap:"第四章", q:"战术训练的基本要求？"},
+  {id:106, sub:"运动训练学", type:"大题", chap:"第四章", q:"创新技法分类？"},
+  {id:107, sub:"运动训练学", type:"大题", chap:"第四章", q:"运动员心理能力的影响因素？"},
+  {id:108, sub:"运动训练学", type:"大题", chap:"第四章", q:"运动员的心理训练的内容与特点？"},
+  {id:109, sub:"运动训练学", type:"大题", chap:"第四章", q:"常用的心理训练方法？"},
+  {id:110, sub:"运动训练学", type:"大题", chap:"第四章", q:"运动员心理训练的基本要求？"},
+  {id:111, sub:"运动训练学", type:"大题", chap:"第四章", q:"运动员知识能力的运用？"},
+  {id:112, sub:"运动训练学", type:"大题", chap:"第四章", q:"运动员知识能力的构成？"},
+  {id:113, sub:"运动训练学", type:"大题", chap:"第四章", q:"运动员知识能力的分类？"},
+  {id:114, sub:"运动训练学", type:"大题", chap:"第四章", q:"运动员知识能力的获得与提高？"},
+  {id:115, sub:"运动训练学", type:"大题", chap:"第五章", q:"训练方法的基本意义？"},
+  {id:116, sub:"运动训练学", type:"大题", chap:"第五章", q:"训练方法的基本分类与依据？"},
+  {id:117, sub:"运动训练学", type:"大题", chap:"第五章", q:"训练方法基本要素与功能？"},
+  {id:118, sub:"运动训练学", type:"大题", chap:"第五章", q:"控制方法要素与功能？"},
+  {id:119, sub:"运动训练学", type:"大题", chap:"第五章", q:"基本方法要素与功能？"},
+  {id:120, sub:"运动训练学", type:"大题", chap:"第五章", q:"简述运动训练控制方法🌟？"},
+  {id:121, sub:"运动训练学", type:"大题", chap:"第五章", q:"模式训练法？"},
+  {id:122, sub:"运动训练学", type:"大题", chap:"第五章", q:"程序训练法？"},
+  {id:123, sub:"运动训练学", type:"大题", chap:"第五章", q:"种训练控制方法异同点的比较？"},
+  {id:124, sub:"运动训练学", type:"大题", chap:"第五章", q:"简述操作性性的方法？"},
+  {id:125, sub:"运动训练学", type:"大题", chap:"第五章", q:"训练方法和训练手段的异同点？"},
+  {id:126, sub:"运动训练学", type:"大题", chap:"第五章", q:"循环训练法？"},
+  {id:127, sub:"运动训练学", type:"大题", chap:"第五章", q:"重复训练法？"},
+  {id:128, sub:"运动训练学", type:"大题", chap:"第五章", q:"分解训练法？"},
+  {id:129, sub:"运动训练学", type:"大题", chap:"第五章", q:"完整训练法？"},
+  {id:130, sub:"运动训练学", type:"大题", chap:"第五章", q:"比赛训练法？"},
+  {id:131, sub:"运动训练学", type:"大题", chap:"第五章", q:"持续训练法？"},
+  {id:132, sub:"运动训练学", type:"大题", chap:"第五章", q:"间歇训练法？"},
+  {id:133, sub:"运动训练学", type:"大题", chap:"第五章", q:"微机辅助训练法？"},
+  {id:134, sub:"运动训练学", type:"大题", chap:"第五章", q:"训练手段的基本功能？"},
+  {id:135, sub:"运动训练学", type:"大题", chap:"第五章", q:"训练手段发展趋势？"},
+  {id:136, sub:"运动训练学", type:"大题", chap:"第五章", q:"训练手段基本结构？"},
+  {id:137, sub:"运动训练学", type:"大题", chap:"第五章", q:"训练手段的基本类型？"},
+  {id:138, sub:"运动训练学", type:"大题", chap:"第六章", q:"运动负荷及其构成要素？"},
+  {id:139, sub:"运动训练学", type:"大题", chap:"第六章", q:"运动负荷的功能？"},
+  {id:140, sub:"运动训练学", type:"大题", chap:"第六章", q:"训练负荷设计的依据？"},
+  {id:141, sub:"运动训练学", type:"大题", chap:"第六章", q:"运动负荷的分类？"},
+  {id:142, sub:"运动训练学", type:"大题", chap:"第六章", q:"竞技状态的基本特征？"},
+  {id:143, sub:"运动训练学", type:"大题", chap:"第六章", q:"训练负荷设计需要考虑的问题？"},
+  {id:144, sub:"运动训练学", type:"大题", chap:"第六章", q:"训练负荷设计的要求？"},
+  {id:145, sub:"运动训练学", type:"大题", chap:"第六章", q:"运动训练复合的设计与安排？"},
+  {id:146, sub:"运动训练学", type:"大题", chap:"第六章", q:"训练负荷设计与安排的基本模式？"},
+  {id:147, sub:"运动训练学", type:"大题", chap:"第六章", q:"运动训练负荷设计与安排的专门模式？"},
+  {id:148, sub:"运动训练学", type:"大题", chap:"第六章", q:"训练负荷及监控的作用？"},
+  {id:149, sub:"运动训练学", type:"大题", chap:"第六章", q:"运动训练负荷生物学监控的主要指标与评定标准？"},
+  {id:150, sub:"运动训练学", type:"大题", chap:"第六章", q:"运动训练负荷心理学监控的主要指标与评？"},
+  {id:151, sub:"运动训练学", type:"大题", chap:"第六章", q:"定标准"},
+  {id:152, sub:"运动训练学", type:"大题", chap:"第六章", q:"不同项群负荷的特征？"},
+  {id:153, sub:"运动训练学", type:"大题", chap:"第七章", q:"运动训练的基本流程？"},
+  {id:154, sub:"运动训练学", type:"大题", chap:"第七章", q:"运动训练过程的基本构架？"},
+  {id:155, sub:"运动训练学", type:"大题", chap:"第七章", q:"运动训练过程的层级体系？"},
+  {id:156, sub:"运动训练学", type:"大题", chap:"第七章", q:"运动训练过程层级划分？"},
+  {id:157, sub:"运动训练学", type:"大题", chap:"第七章", q:"多年训练过程的序列安排？"},
+  {id:158, sub:"运动训练学", type:"大题", chap:"第七章", q:"多年训练过程中的链接模式？"},
+  {id:159, sub:"运动训练学", type:"大题", chap:"第七章", q:"制定训练计划的必要性与认知要点？"},
+  {id:160, sub:"运动训练学", type:"大题", chap:"第七章", q:"依据"},
+  {id:161, sub:"运动训练学", type:"大题", chap:"第七章", q:"制定训练计划的主要依据？"},
+  {id:162, sub:"运动训练学", type:"大题", chap:"第七章", q:"运动训练计划的基本内容？"},
+  {id:163, sub:"运动训练学", type:"大题", chap:"第七章", q:"制定训练计划的注意事？"},
+  {id:164, sub:"运动训练学", type:"大题", chap:"第七章", q:"全程性多年训练计划的制定？"},
+  {id:165, sub:"运动训练学", type:"大题", chap:"第七章", q:"制订多年训练计划的必要性？"},
+  {id:166, sub:"运动训练学", type:"大题", chap:"第七章", q:"全程性多年训练过程的年龄特征？"},
+  {id:167, sub:"运动训练学", type:"大题", chap:"第七章", q:"全程性多年训练计划的内容安排？"},
+  {id:168, sub:"运动训练学", type:"大题", chap:"第七章", q:"全程最多年新的计划的负荷安排？"},
+  {id:169, sub:"运动训练学", type:"大题", chap:"第七章", q:"区间性多年训练计划的制订？"},
+  {id:170, sub:"运动训练学", type:"大题", chap:"第七章", q:"年度训练计划的制订？"},
+  {id:171, sub:"运动训练学", type:"大题", chap:"第七章", q:"大周期训练计划的制订？"},
+  {id:172, sub:"运动训练学", type:"大题", chap:"第七章", q:"周训练计划的制订？"},
+  {id:173, sub:"运动训练学", type:"大题", chap:"第七章", q:"课训练计划的制订？"},
+  {id:174, sub:"运动训练学", type:"大题", chap:"第七章", q:"控制阅读训练过程的实施要？"},
+  {id:175, sub:"运动训练学", type:"大题", chap:"第七章", q:"组织训练过程的基本要求？"},
+  {id:176, sub:"运动训练学", type:"大题", chap:"第七章", q:"控制训练过程的要点？"},
+  {id:177, sub:"运动训练学", type:"大题", chap:"第七章", q:"运动训练效果的评价？"},
+  {id:178, sub:"运动训练学", type:"大题", chap:"第八章", q:"教练员的作用与职责？"},
+  {id:179, sub:"运动训练学", type:"大题", chap:"第八章", q:"教练员的角色？"},
+  {id:180, sub:"运动训练学", type:"大题", chap:"第八章", q:"教练员的职教对象及其分类？"},
+  {id:181, sub:"运动训练学", type:"大题", chap:"第八章", q:"教练员的职教及其职教理念？"},
+  {id:182, sub:"运动训练学", type:"大题", chap:"第八章", q:"教练员的知识与能力？"},
+  {id:183, sub:"运动训练学", type:"大题", chap:"第八章", q:"教练员的领导行为特点？"},
+  {id:184, sub:"运动训练学", type:"大题", chap:"第八章", q:"教练员领导行为对运动员的影响？"},
+  {id:185, sub:"运动训练学", type:"大题", chap:"第八章", q:"教练员领导风格及其变化？"},
+  {id:186, sub:"运动训练学", type:"大题", chap:"第八章", q:"高原现象影响和处理方式？"},
+  {id:187, sub:"运动训练学", type:"名词解释", chap:"", q:"运动训练"},
+  {id:188, sub:"运动训练学", type:"名词解释", chap:"", q:"运动员选材"},
+  {id:189, sub:"运动训练学", type:"名词解释", chap:"", q:"竞技体育"},
+  {id:190, sub:"运动训练学", type:"名词解释", chap:"", q:"运动竞赛"},
+  {id:191, sub:"运动训练学", type:"名词解释", chap:"", q:"运动员"},
+  {id:192, sub:"运动训练学", type:"名词解释", chap:"", q:"一般训练理论"},
+  {id:193, sub:"运动训练学", type:"名词解释", chap:"", q:"专项训练理论"},
+  {id:194, sub:"运动训练学", type:"名词解释", chap:"", q:"项群训练理论"},
+  {id:195, sub:"运动训练学", type:"名词解释", chap:"", q:"运动训练学"},
+  {id:196, sub:"运动训练学", type:"名词解释", chap:"", q:"运动负荷"},
+  {id:197, sub:"运动训练学", type:"名词解释", chap:"", q:"运动训练计划"},
+  {id:198, sub:"运动训练学", type:"名词解释", chap:"", q:"竞技能力"},
+  {id:199, sub:"运动训练学", type:"名词解释", chap:"", q:"竞技水平"},
+  {id:200, sub:"运动训练学", type:"名词解释", chap:"", q:"竞技能力结构模型"},
+  {id:201, sub:"运动训练学", type:"名词解释", chap:"", q:"木桶模型"},
+  {id:202, sub:"运动训练学", type:"名词解释", chap:"", q:"积木模型"},
+  {id:203, sub:"运动训练学", type:"名词解释", chap:"", q:"双子模型"},
+  {id:204, sub:"运动训练学", type:"名词解释", chap:"", q:"体能"},
+  {id:205, sub:"运动训练学", type:"名词解释", chap:"", q:"技能"},
+  {id:206, sub:"运动训练学", type:"名词解释", chap:"", q:"战术"},
+  {id:207, sub:"运动训练学", type:"名词解释", chap:"", q:"知识"},
+  {id:208, sub:"运动训练学", type:"名词解释", chap:"", q:"心能"},
+  {id:209, sub:"运动训练学", type:"名词解释", chap:"", q:"运动成绩"},
+  {id:210, sub:"运动训练学", type:"名词解释", chap:"", q:"比赛名次"},
+  {id:211, sub:"运动训练学", type:"名词解释", chap:"", q:"竞技体育"},
+  {id:212, sub:"运动训练学", type:"名词解释", chap:"", q:"补偿效应"},
+  {id:213, sub:"运动训练学", type:"名词解释", chap:"", q:"运动训练规律"},
+  {id:214, sub:"运动训练学", type:"名词解释", chap:"", q:"竞技能力构成规律"},
+  {id:215, sub:"运动训练学", type:"名词解释", chap:"", q:"三从一大原则"},
+  {id:216, sub:"运动训练学", type:"名词解释", chap:"", q:"运动训练过程"},
+  {id:217, sub:"运动训练学", type:"名词解释", chap:"", q:"竞技能力表现规律"},
+  {id:218, sub:"运动训练学", type:"名词解释", chap:"", q:"运动训练原则"},
+  {id:219, sub:"运动训练学", type:"名词解释", chap:"", q:"竞技能力变化规律"},
+  {id:220, sub:"运动训练学", type:"名词解释", chap:"", q:"体能"},
+  {id:221, sub:"运动训练学", type:"名词解释", chap:"", q:"力量素质"},
+  {id:222, sub:"运动训练学", type:"名词解释", chap:"", q:"最大力量"},
+  {id:223, sub:"运动训练学", type:"名词解释", chap:"", q:"快速力量"},
+  {id:224, sub:"运动训练学", type:"名词解释", chap:"", q:"力量耐力"},
+  {id:225, sub:"运动训练学", type:"名词解释", chap:"", q:"速度素质"},
+  {id:226, sub:"运动训练学", type:"名词解释", chap:"", q:"反应速度"},
+  {id:227, sub:"运动训练学", type:"名词解释", chap:"", q:"动作速度"},
+  {id:228, sub:"运动训练学", type:"名词解释", chap:"", q:"移动速度"},
+  {id:229, sub:"运动训练学", type:"名词解释", chap:"", q:"耐力素质"},
+  {id:230, sub:"运动训练学", type:"名词解释", chap:"", q:"一般耐力"},
+  {id:231, sub:"运动训练学", type:"名词解释", chap:"", q:"专项耐力"},
+  {id:232, sub:"运动训练学", type:"名词解释", chap:"", q:"协调素质"},
+  {id:233, sub:"运动训练学", type:"名词解释", chap:"", q:"节奏能力"},
+  {id:234, sub:"运动训练学", type:"名词解释", chap:"", q:"柔韧素质"},
+  {id:235, sub:"运动训练学", type:"名词解释", chap:"", q:"灵敏素质"},
+  {id:236, sub:"运动训练学", type:"名词解释", chap:"", q:"运动技术"},
+  {id:237, sub:"运动训练学", type:"名词解释", chap:"", q:"直观法"},
+  {id:238, sub:"运动训练学", type:"名词解释", chap:"", q:"语言法"},
+  {id:239, sub:"运动训练学", type:"名词解释", chap:"", q:"技术环境"},
+  {id:240, sub:"运动训练学", type:"名词解释", chap:"", q:"想象法"},
+  {id:241, sub:"运动训练学", type:"名词解释", chap:"", q:"表象法或念动法"},
+  {id:242, sub:"运动训练学", type:"名词解释", chap:"", q:"特长技术"},
+  {id:243, sub:"运动训练学", type:"名词解释", chap:"", q:"技术规范或技术规格"},
+  {id:244, sub:"运动训练学", type:"名词解释", chap:"", q:"技术风格"},
+  {id:245, sub:"运动训练学", type:"名词解释", chap:"", q:"运动战术"},
+  {id:246, sub:"运动训练学", type:"名词解释", chap:"", q:"战术观念"},
+  {id:247, sub:"运动训练学", type:"名词解释", chap:"", q:"战术指导思想"},
+  {id:248, sub:"运动训练学", type:"名词解释", chap:"", q:"战术意识"},
+  {id:249, sub:"运动训练学", type:"名词解释", chap:"", q:"战术知识"},
+  {id:250, sub:"运动训练学", type:"名词解释", chap:"", q:"战术形式"},
+  {id:251, sub:"运动训练学", type:"名词解释", chap:"", q:"战术行动"},
+  {id:252, sub:"运动训练学", type:"名词解释", chap:"", q:"阵型战术"},
+  {id:253, sub:"运动训练学", type:"名词解释", chap:"", q:"体力分配战术"},
+  {id:254, sub:"运动训练学", type:"名词解释", chap:"", q:"心理战术"},
+  {id:255, sub:"运动训练学", type:"名词解释", chap:"", q:"参赛目的战术"},
+  {id:256, sub:"运动训练学", type:"名词解释", chap:"", q:"特殊战术"},
+  {id:257, sub:"运动训练学", type:"名词解释", chap:"", q:"战略决策"},
+  {id:258, sub:"运动训练学", type:"名词解释", chap:"", q:"战术决策"},
+  {id:259, sub:"运动训练学", type:"名词解释", chap:"", q:"制胜规律"},
+  {id:260, sub:"运动训练学", type:"名词解释", chap:"", q:"想象训练法"},
+  {id:261, sub:"运动训练学", type:"名词解释", chap:"", q:"虚拟现实训练法"},
+  {id:262, sub:"运动训练学", type:"名词解释", chap:"", q:"心理能力"},
+  {id:263, sub:"运动训练学", type:"名词解释", chap:"", q:"知识能力"},
+  {id:264, sub:"运动训练学", type:"名词解释", chap:"", q:"运动训练方法"},
+  {id:265, sub:"运动训练学", type:"名词解释", chap:"", q:"模式训练法"},
+  {id:266, sub:"运动训练学", type:"名词解释", chap:"", q:"程序训练法"},
+  {id:267, sub:"运动训练学", type:"名词解释", chap:"", q:"微机辅助训练法"},
+  {id:268, sub:"运动训练学", type:"名词解释", chap:"", q:"分解训练法"},
+  {id:269, sub:"运动训练学", type:"名词解释", chap:"", q:"完整训练法"},
+  {id:270, sub:"运动训练学", type:"名词解释", chap:"", q:"持续训练法"},
+  {id:271, sub:"运动训练学", type:"名词解释", chap:"", q:"重复训练法"},
+  {id:272, sub:"运动训练学", type:"名词解释", chap:"", q:"间歇训练法"},
+  {id:273, sub:"运动训练学", type:"名词解释", chap:"", q:"循环训练法"},
+  {id:274, sub:"运动训练学", type:"名词解释", chap:"", q:"变换训练法"},
+  {id:275, sub:"运动训练学", type:"名词解释", chap:"", q:"比赛训练法"},
+  {id:276, sub:"运动训练学", type:"名词解释", chap:"", q:"单一动作周期性训练手段"},
+  {id:277, sub:"运动训练学", type:"名词解释", chap:"", q:"单一动作混合性训练手段"},
+  {id:278, sub:"运动训练学", type:"名词解释", chap:"", q:"多元动作固定性训练手段"},
+  {id:279, sub:"运动训练学", type:"名词解释", chap:"", q:"多元动作变异性训练手段"},
+  {id:280, sub:"运动训练学", type:"名词解释", chap:"", q:"训练手段"},
+  {id:281, sub:"运动训练学", type:"名词解释", chap:"", q:"运动训练负荷"},
+  {id:282, sub:"运动训练学", type:"名词解释", chap:"", q:"运动负荷"},
+  {id:283, sub:"运动训练学", type:"名词解释", chap:"", q:"竞技负荷"},
+  {id:284, sub:"运动训练学", type:"名词解释", chap:"", q:"训练负荷"},
+  {id:285, sub:"运动训练学", type:"名词解释", chap:"", q:"比赛负荷"},
+  {id:286, sub:"运动训练学", type:"名词解释", chap:"", q:"竞技状态的时相性"},
+  {id:287, sub:"运动训练学", type:"名词解释", chap:"", q:"竞技状态的可控性"},
+  {id:288, sub:"运动训练学", type:"名词解释", chap:"", q:"竞技状态的相对性"},
+  {id:289, sub:"运动训练学", type:"名词解释", chap:"", q:"强度区间累计时间法"},
+  {id:290, sub:"运动训练学", type:"名词解释", chap:"", q:"前适应和适应峰"},
+  {id:291, sub:"运动训练学", type:"名词解释", chap:"", q:"赛前集训"},
+  {id:292, sub:"运动训练学", type:"名词解释", chap:"", q:"运动训练监控"},
+  {id:293, sub:"运动训练学", type:"名词解释", chap:"", q:"全程性的多年训练过程"},
+  {id:294, sub:"运动训练学", type:"名词解释", chap:"", q:"区间性多年训练过程"},
+  {id:295, sub:"运动训练学", type:"名词解释", chap:"", q:"区间性多年训练计划"},
+  {id:296, sub:"运动训练学", type:"名词解释", chap:"", q:"链接区间"},
+  {id:297, sub:"运动训练学", type:"名词解释", chap:"", q:"单周期"},
+  {id:298, sub:"运动训练学", type:"名词解释", chap:"", q:"双周期"},
+  {id:299, sub:"运动训练学", type:"名词解释", chap:"", q:"多周期"},
+  {id:300, sub:"运动训练学", type:"名词解释", chap:"", q:"板块训练"},
+  {id:301, sub:"运动训练学", type:"名词解释", chap:"", q:"执教理念"},
+  {id:302, sub:"运动训练学", type:"名词解释", chap:"", q:"有效指导"},
+  {id:303, sub:"运动训练学", type:"名词解释", chap:"", q:"领导风格"},
+  {id:304, sub:"运动生理学", type:"大题", chap:"绪论", q:"人体基本特征？"},
+  {id:305, sub:"运动生理学", type:"大题", chap:"绪论", q:"调节方式？"},
+  {id:306, sub:"运动生理学", type:"大题", chap:"绪论", q:"研究方法？"},
+  {id:307, sub:"运动生理学", type:"大题", chap:"绪论", q:"运动生理学任务？"},
+  {id:308, sub:"运动生理学", type:"大题", chap:"绪论", q:"反馈和前馈及其应用？"},
+  {id:309, sub:"运动生理学", type:"大题", chap:"第一章", q:"能够引起机体产生反应的刺激条件？"},
+  {id:310, sub:"运动生理学", type:"大题", chap:"第一章", q:"兴奋在神经肌肉接点传递有哪些特点？"},
+  {id:311, sub:"运动生理学", type:"大题", chap:"第一章", q:"训练对两类肌纤维的影响？"},
+  {id:312, sub:"运动生理学", type:"大题", chap:"第一章", q:"试述肌肉收缩的三种形式，并比较它们的力学特征及其应用？"},
+  {id:313, sub:"运动生理学", type:"大题", chap:"第一章", q:"肌纤维百分比组成与运动能力的关系以及在指导运动训练实践有什么意义？"},
+  {id:314, sub:"运动生理学", type:"大题", chap:"第一章", q:"细胞生物电活动？"},
+  {id:315, sub:"运动生理学", type:"大题", chap:"第一章", q:"静息电位？"},
+  {id:316, sub:"运动生理学", type:"大题", chap:"第一章", q:"动作电位？"},
+  {id:317, sub:"运动生理学", type:"大题", chap:"第一章", q:"神经纤维上传导动作电位的特征？"},
+  {id:318, sub:"运动生理学", type:"大题", chap:"第一章", q:"横桥的功能？"},
+  {id:319, sub:"运动生理学", type:"大题", chap:"第一章", q:"肌管系统？"},
+  {id:320, sub:"运动生理学", type:"大题", chap:"第一章", q:"肌肉收缩与舒张的过程？"},
+  {id:321, sub:"运动生理学", type:"大题", chap:"第一章", q:"1. 兴奋在神经肌肉节点的传递及特点？"},
+  {id:322, sub:"运动生理学", type:"大题", chap:"第一章", q:"2. 肌肉兴奋收缩偶练？"},
+  {id:323, sub:"运动生理学", type:"大题", chap:"第一章", q:"3. 肌肉收缩与舒张？"},
+  {id:324, sub:"运动生理学", type:"大题", chap:"第一章", q:"肌肉收缩的形式与力学特征？"},
+  {id:325, sub:"运动生理学", type:"大题", chap:"第一章", q:"1. 肌肉收缩形式？"},
+  {id:326, sub:"运动生理学", type:"大题", chap:"第一章", q:"2. 肌肉收缩速度和张力关系？"},
+  {id:327, sub:"运动生理学", type:"大题", chap:"第一章", q:"3. 长度和张力关系？"},
+  {id:328, sub:"运动生理学", type:"大题", chap:"第一章", q:"不同类型骨骼肌纤维的形态结构和功能特征？"},
+  {id:329, sub:"运动生理学", type:"大题", chap:"第一章", q:"1. 骨骼肌纤维类型的划分方法？"},
+  {id:330, sub:"运动生理学", type:"大题", chap:"2. 人体骨骼肌纤维类型的分布", q:"3. 不同类型，骨骼肌纤维的形态代谢和生理特征？"},
+  {id:331, sub:"运动生理学", type:"大题", chap:"2. 人体骨骼肌纤维类型的分布", q:"肌纤维类型与运动的关系？"},
+  {id:332, sub:"运动生理学", type:"大题", chap:"3. 运动训练对骨骼肌纤维的影响", q:"运动训练对骨骼肌纤维类型百分构成的影响？"},
+  {id:333, sub:"运动生理学", type:"大题", chap:"3. 运动训练对骨骼肌纤维的影响", q:"运动训练对肌纤维面积的影响？"},
+  {id:334, sub:"运动生理学", type:"大题", chap:"3. 运动训练对骨骼肌纤维的影响", q:"运动训练对肌纤维代谢特征的影响？"},
+  {id:335, sub:"运动生理学", type:"大题", chap:"3. 运动训练对肌纤维影响的专一性", q:"动作电位的特点？"},
+  {id:336, sub:"运动生理学", type:"大题", chap:"3. 运动训练对肌纤维影响的专一性", q:"肌纤维百分比组成和运动能力的关系？"},
+  {id:337, sub:"运动生理学", type:"大题", chap:"3. 运动训练对肌纤维影响的专一性", q:"机电信号的分类/肌电信号的引导与记录？"},
+  {id:338, sub:"运动生理学", type:"大题", chap:"3. 运动训练对肌纤维影响的专一性", q:"机电图的应用？"},
+  {id:339, sub:"运动生理学", type:"大题", chap:"第二章", q:"为什么ATP含量保持稳定？"},
+  {id:340, sub:"运动生理学", type:"大题", chap:"第二章", q:"ATP是能量代谢的重要媒介？"},
+  {id:341, sub:"运动生理学", type:"大题", chap:"第二章", q:"各能量供应系统的ATP生成量和生成效率特点？"},
+  {id:342, sub:"运动生理学", type:"大题", chap:"第二章", q:"间接测热法？"},
+  {id:343, sub:"运动生理学", type:"大题", chap:"第二章", q:"能量代谢测定原理与方法？"},
+  {id:344, sub:"运动生理学", type:"大题", chap:"第二章", q:"1. 能量代谢的测定原理？"},
+  {id:345, sub:"运动生理学", type:"大题", chap:"第二章", q:"2. 能量代谢的测定方法？"},
+  {id:346, sub:"运动生理学", type:"大题", chap:"第二章", q:"糖脂肪蛋白供能特点？"},
+  {id:347, sub:"运动生理学", type:"大题", chap:"第二章", q:"影响能量代谢的因素？"},
+  {id:348, sub:"运动生理学", type:"大题", chap:"第二章", q:"运动训练会对肌肉能量代谢产生的影响？"},
+  {id:349, sub:"运动生理学", type:"大题", chap:"第二章", q:"大供能系统ATP生成过程？"},
+  {id:350, sub:"运动生理学", type:"大题", chap:"第二章", q:"运动状态下的能量代谢？"},
+  {id:351, sub:"运动生理学", type:"大题", chap:"第二章", q:"1. 急性运动对于能量代谢的反应？"},
+  {id:352, sub:"运动生理学", type:"大题", chap:"第二章", q:"2. 慢性运动对于能量代谢的适应？"},
+  {id:353, sub:"运动生理学", type:"大题", chap:"第二章", q:"摄氧动力学曲线？"},
+  {id:354, sub:"运动生理学", type:"大题", chap:"第二章", q:"基础代谢规定条件？"},
+  {id:355, sub:"运动生理学", type:"大题", chap:"第二章", q:"与运动相关的能量代谢检测与评价？"},
+  {id:356, sub:"运动生理学", type:"大题", chap:"第三章", q:"组成神经系统的细胞及其一般功能？"},
+  {id:357, sub:"运动生理学", type:"大题", chap:"第三章", q:"神经元和神经胶质细胞？"},
+  {id:358, sub:"运动生理学", type:"大题", chap:"第三章", q:"耳朵听觉功能？"},
+  {id:359, sub:"运动生理学", type:"大题", chap:"第三章", q:"1. 声音信息的感受与传递？"},
+  {id:360, sub:"运动生理学", type:"大题", chap:"第三章", q:"2. 听觉信息的传入通路及中枢分析？"},
+  {id:361, sub:"运动生理学", type:"大题", chap:"第三章", q:"内耳的平衡觉功能？"},
+  {id:362, sub:"运动生理学", type:"大题", chap:"第三章", q:"1. 前庭器官的感受装置与功能？"},
+  {id:363, sub:"运动生理学", type:"大题", chap:"第三章", q:"2. 前庭反应和前庭稳定性？"},
+  {id:364, sub:"运动生理学", type:"大题", chap:"第三章", q:"神经系统对姿势和运动的调节？"},
+  {id:365, sub:"运动生理学", type:"大题", chap:"第三章", q:"* 运动传输的最后通路？"},
+  {id:366, sub:"运动生理学", type:"大题", chap:"第三章", q:"* 中枢对姿势的调节？"},
+  {id:367, sub:"运动生理学", type:"大题", chap:"第三章", q:"1. 脊髓对姿势的调节？"},
+  {id:368, sub:"运动生理学", type:"大题", chap:"第三章", q:"2. 脑干对紧张和姿势的调节？"},
+  {id:369, sub:"运动生理学", type:"大题", chap:"第三章", q:"3. 脑干以上高位中枢对姿势的调节？"},
+  {id:370, sub:"运动生理学", type:"大题", chap:"第三章", q:"中枢对躯体运动的调节？"},
+  {id:371, sub:"运动生理学", type:"大题", chap:"第三章", q:"1. 大脑皮质对运动的调节功能？"},
+  {id:372, sub:"运动生理学", type:"大题", chap:"第三章", q:"2. 基底神经节对躯体运动的调节？"},
+  {id:373, sub:"运动生理学", type:"大题", chap:"第三章", q:"3. 小脑对躯体运动的调节？"},
+  {id:374, sub:"运动生理学", type:"大题", chap:"第三章", q:"突触的传递过程？"},
+  {id:375, sub:"运动生理学", type:"大题", chap:"第三章", q:"电突触的功能？"},
+  {id:376, sub:"运动生理学", type:"大题", chap:"第三章", q:"反射的基本过程？"},
+  {id:377, sub:"运动生理学", type:"大题", chap:"第三章", q:"条件反射和非条件反射各自的特点？"},
+  {id:378, sub:"运动生理学", type:"大题", chap:"第三章", q:"简述视网膜的感光化能系统及其功能？"},
+  {id:379, sub:"运动生理学", type:"大题", chap:"第三章", q:"中枢神经元的联系方式？"},
+  {id:380, sub:"运动生理学", type:"大题", chap:"第三章", q:"中枢兴奋在化学性突触传递的特征？"},
+  {id:381, sub:"运动生理学", type:"大题", chap:"第三章", q:"感受器的一般生理特性？"},
+  {id:382, sub:"运动生理学", type:"大题", chap:"第三章", q:"感受器的分类？"},
+  {id:383, sub:"运动生理学", type:"大题", chap:"第三章", q:"感觉信息的编码与分析处理？"},
+  {id:384, sub:"运动生理学", type:"大题", chap:"第三章", q:"论述听觉信息的传入通路及其中枢分析？"},
+  {id:385, sub:"运动生理学", type:"大题", chap:"第三章", q:"脑干对肌紧张和姿势的调节？"},
+  {id:386, sub:"运动生理学", type:"大题", chap:"第三章", q:"状态反射的规律？"},
+  {id:387, sub:"运动生理学", type:"大题", chap:"第三章", q:"基地神经节与大脑皮质的纤维联系和功能？"},
+  {id:388, sub:"运动生理学", type:"大题", chap:"第三章", q:"小脑的运动调节功能？"},
+  {id:389, sub:"运动生理学", type:"大题", chap:"第三章", q:"随意运动的发动（大脑、基地神经节和小脑在调控躯体运动中是如何协调的）？"},
+  {id:390, sub:"运动生理学", type:"大题", chap:"第三章", q:"大脑皮质与运动有关的脑区有哪几个部分指出各部分的具体位置和功能？"},
+  {id:391, sub:"运动生理学", type:"大题", chap:"第三章", q:"简述机体主要的本体感受器及其功能？"},
+  {id:392, sub:"运动生理学", type:"大题", chap:"第三章", q:"试述中枢运动控制系统的等级划分及其功能特点？"},
+  {id:393, sub:"运动生理学", type:"大题", chap:"第三章", q:"示数基底神经节的神经通路及其功能？"},
+  {id:394, sub:"运动生理学", type:"大题", chap:"第三章", q:"直线正负加速度和旋转运动产生的生理机制？"},
+  {id:395, sub:"运动生理学", type:"大题", chap:"第三章", q:"躯体感觉代表区与感觉代表区的感觉投射规律及其功能？"},
+  {id:396, sub:"运动生理学", type:"大题", chap:"第三章", q:"简述躯体，感觉和内脏感觉的传入通路？"},
+  {id:397, sub:"运动生理学", type:"大题", chap:"第三章", q:"脑干对肌紧张是如何调控的？"},
+  {id:398, sub:"运动生理学", type:"大题", chap:"第四章", q:"激素对机体功能的调节作用？"},
+  {id:399, sub:"运动生理学", type:"大题", chap:"第四章", q:"激素传递信息的主要方式？"},
+  {id:400, sub:"运动生理学", type:"大题", chap:"第四章", q:"激素的一般特征？"},
+  {id:401, sub:"运动生理学", type:"大题", chap:"第四章", q:"激素的细胞作用机制？"},
+  {id:402, sub:"运动生理学", type:"大题", chap:"第四章", q:"1. 靶细胞的激素受体？"},
+  {id:403, sub:"运动生理学", type:"大题", chap:"第四章", q:"2. 细胞膜受体介导的激素作用机制 （含带泪激素？"},
+  {id:404, sub:"运动生理学", type:"大题", chap:"第四章", q:"3. 细胞内受体介导的激素作用机制（类固醇类肌肤？"},
+  {id:405, sub:"运动生理学", type:"大题", chap:"第四章", q:"低速受体在细胞的分布特点与作用？"},
+  {id:406, sub:"运动生理学", type:"大题", chap:"第四章", q:"比较生长激素和甲状腺腺激素影响机体生长发育的异同点？"},
+  {id:407, sub:"运动生理学", type:"大题", chap:"第四章", q:"示数激素对急性负荷的应答及其对长期运动的适应特征？"},
+  {id:408, sub:"运动生理学", type:"大题", chap:"第四章", q:"内分泌轴？"},
+  {id:409, sub:"运动生理学", type:"大题", chap:"第四章", q:"1. 下丘脑垂体肾上腺皮质轴？"},
+  {id:410, sub:"运动生理学", type:"大题", chap:"第四章", q:"2. 下丘脑垂体甲状腺轴？"},
+  {id:411, sub:"运动生理学", type:"大题", chap:"第四章", q:"3. 下丘脑垂体性腺轴？"},
+  {id:412, sub:"运动生理学", type:"大题", chap:"第四章", q:"主要内分泌腺的功能？"},
+  {id:413, sub:"运动生理学", type:"大题", chap:"第四章", q:"1. 下丘脑和垂体？"},
+  {id:414, sub:"运动生理学", type:"大题", chap:"第四章", q:"2. 甲状腺和甲状腺？"},
+  {id:415, sub:"运动生理学", type:"大题", chap:"第四章", q:"3. 肾上腺？"},
+  {id:416, sub:"运动生理学", type:"大题", chap:"第四章", q:"4. 胰岛？"},
+  {id:417, sub:"运动生理学", type:"大题", chap:"第四章", q:"5. 性腺？"},
+  {id:418, sub:"运动生理学", type:"大题", chap:"第四章", q:"甲状腺激素？"},
+  {id:419, sub:"运动生理学", type:"大题", chap:"第四章", q:"糖皮质激素作用？"},
+  {id:420, sub:"运动生理学", type:"大题", chap:"第四章", q:"应激激素和应急激素的异同？"},
+  {id:421, sub:"运动生理学", type:"大题", chap:"第四章", q:"胰岛素的作用？"},
+  {id:422, sub:"运动生理学", type:"大题", chap:"第四章", q:"胰高血糖素的作用？"},
+  {id:423, sub:"运动生理学", type:"大题", chap:"第四章", q:"运动对激素的反应和适应？"},
+  {id:424, sub:"运动生理学", type:"大题", chap:"第四章", q:"激素对运动时能量代谢的调控？"},
+  {id:425, sub:"运动生理学", type:"大题", chap:"第四章", q:"1. 对糖代谢的调控？"},
+  {id:426, sub:"运动生理学", type:"大题", chap:"第四章", q:"2. 对脂肪代谢的调控？"},
+  {id:427, sub:"运动生理学", type:"大题", chap:"第四章", q:"激素对运动时水盐代谢的调控？"},
+  {id:428, sub:"运动生理学", type:"大题", chap:"第五章", q:"非特异和特异性免疫的特征？"},
+  {id:429, sub:"运动生理学", type:"大题", chap:"第五章", q:"试述细胞因子及其主要作用？"},
+  {id:430, sub:"运动生理学", type:"大题", chap:"第五章", q:"人体免疫系统的几个基本功能？"},
+  {id:431, sub:"运动生理学", type:"大题", chap:"第五章", q:"经常进行适宜体育锻炼，改善慢性病的主要机制？"},
+  {id:432, sub:"运动生理学", type:"大题", chap:"第五章", q:"免疫系统及作用？"},
+  {id:433, sub:"运动生理学", type:"大题", chap:"第五章", q:"免疫应答？"},
+  {id:434, sub:"运动生理学", type:"大题", chap:"第五章", q:"运动与免疫？"},
+  {id:435, sub:"运动生理学", type:"大题", chap:"第五章", q:"1. 免疫功能对运动的反应？"},
+  {id:436, sub:"运动生理学", type:"大题", chap:"第五章", q:"2. 开窗理论？"},
+  {id:437, sub:"运动生理学", type:"大题", chap:"第五章", q:"3. j曲线？"},
+  {id:438, sub:"运动生理学", type:"大题", chap:"第五章", q:"4. 免疫功能对运动的适应？"},
+  {id:439, sub:"运动生理学", type:"大题", chap:"第五章", q:"5. 免疫功能对健身运动的适应？"},
+  {id:440, sub:"运动生理学", type:"大题", chap:"第五章", q:"6. 免疫功能对运动训练的适应？"},
+  {id:441, sub:"运动生理学", type:"大题", chap:"第五章", q:"7. 免疫功能的调理？"},
+  {id:442, sub:"运动生理学", type:"大题", chap:"第六章", q:"血液的理化特性？"},
+  {id:443, sub:"运动生理学", type:"大题", chap:"第六章", q:"血液的组成及理化性质？"},
+  {id:444, sub:"运动生理学", type:"大题", chap:"第六章", q:"血液的功能？"},
+  {id:445, sub:"运动生理学", type:"大题", chap:"第六章", q:"血小板的功能？"},
+  {id:446, sub:"运动生理学", type:"大题", chap:"第六章", q:"论述血浆渗透压的形成及其生理意义？"},
+  {id:447, sub:"运动生理学", type:"大题", chap:"第六章", q:"简述各类白细胞的生理功能？"},
+  {id:448, sub:"运动生理学", type:"大题", chap:"第六章", q:"简述生理止血的过程？"},
+  {id:449, sub:"运动生理学", type:"大题", chap:"第六章", q:"分析血红蛋白与运动能力的关系？"},
+  {id:450, sub:"运动生理学", type:"大题", chap:"第六章", q:"运动对血液成分的影响？"},
+  {id:451, sub:"运动生理学", type:"大题", chap:"第六章", q:"高原训练和低氧训练对血液组成的影响？"},
+  {id:452, sub:"运动生理学", type:"大题", chap:"第六章", q:"血液兴奋剂的危害？"},
+  {id:453, sub:"运动生理学", type:"大题", chap:"第六章", q:"第七"},
+  {id:454, sub:"运动生理学", type:"大题", chap:"第六章", q:"呼吸过程？"},
+  {id:455, sub:"运动生理学", type:"大题", chap:"第六章", q:"呼吸运动？"},
+  {id:456, sub:"运动生理学", type:"大题", chap:"第六章", q:"肺通气功能的评定？"},
+  {id:457, sub:"运动生理学", type:"大题", chap:"第六章", q:"肺容积"},
+  {id:458, sub:"运动生理学", type:"大题", chap:"第六章", q:"肺容量"},
+  {id:459, sub:"运动生理学", type:"大题", chap:"第六章", q:"肺通气量和肺泡通气量？"},
+  {id:460, sub:"运动生理学", type:"大题", chap:"第六章", q:"呼吸形式？"},
+  {id:461, sub:"运动生理学", type:"大题", chap:"第六章", q:"胸膜腔内压？"},
+  {id:462, sub:"运动生理学", type:"大题", chap:"第六章", q:"憋气"},
+  {id:463, sub:"运动生理学", type:"大题", chap:"第六章", q:"深而慢的呼吸比浅而快的呼吸？"},
+  {id:464, sub:"运动生理学", type:"大题", chap:"第六章", q:"肺通气对运动的反应和适应？"},
+  {id:465, sub:"运动生理学", type:"大题", chap:"第六章", q:"呼吸肌的训练？"},
+  {id:466, sub:"运动生理学", type:"大题", chap:"第六章", q:"气体交换的过程？"},
+  {id:467, sub:"运动生理学", type:"大题", chap:"第六章", q:"影响气体交换的因素？"},
+  {id:468, sub:"运动生理学", type:"大题", chap:"第六章", q:"简述胸内负压的成因及其生理意义？"},
+  {id:469, sub:"运动生理学", type:"大题", chap:"第六章", q:"比较每份最大统计量和每份最大11统计量的区别？"},
+  {id:470, sub:"运动生理学", type:"大题", chap:"第六章", q:"氧解离曲线意义及影响？"},
+  {id:471, sub:"运动生理学", type:"大题", chap:"第六章", q:"人体正常呼吸运动的调节？"},
+  {id:472, sub:"运动生理学", type:"大题", chap:"第六章", q:"运动时的呼吸变化的调节？"},
+  {id:473, sub:"运动生理学", type:"大题", chap:"第八章", q:"心肌的生理特性？"},
+  {id:474, sub:"运动生理学", type:"大题", chap:"第八章", q:"心脏的供血功能？"},
+  {id:475, sub:"运动生理学", type:"大题", chap:"第八章", q:"1. 心动周期？"},
+  {id:476, sub:"运动生理学", type:"大题", chap:"2. 心脏的泵血过程", q:"学校体育课的生理负荷是多少？信息？生理机制？"},
+  {id:477, sub:"运动生理学", type:"大题", chap:"2. 心脏的泵血过程", q:"什么是最佳心率范围？为什么新出数量在最佳心率范围才能够保持最高水平？"},
+  {id:478, sub:"运动生理学", type:"大题", chap:"2. 心脏的泵血过程", q:"根据静脉会吸血量的因素，谈谈剧烈运动和如何促进疲劳的消除？"},
+  {id:479, sub:"运动生理学", type:"大题", chap:"2. 心脏的泵血过程", q:"心脏泵血功能的评价？"},
+  {id:480, sub:"运动生理学", type:"大题", chap:"2. 心脏的泵血过程", q:"心力储备选材？"},
+  {id:481, sub:"运动生理学", type:"大题", chap:"2. 心脏的泵血过程", q:"影响心输出量的因素？"},
+  {id:482, sub:"运动生理学", type:"大题", chap:"2. 心脏的泵血过程", q:"心电图的功能？"},
+  {id:483, sub:"运动生理学", type:"大题", chap:"2. 心脏的泵血过程", q:"血管的功能特点及其内分泌功能？"},
+  {id:484, sub:"运动生理学", type:"大题", chap:"2. 心脏的泵血过程", q:"动漫血压的形成条件？"},
+  {id:485, sub:"运动生理学", type:"大题", chap:"2. 心脏的泵血过程", q:"影响动脉血压的因素？"},
+  {id:486, sub:"运动生理学", type:"大题", chap:"2. 心脏的泵血过程", q:"影响静脉血压的因素？"},
+  {id:487, sub:"运动生理学", type:"大题", chap:"2. 心脏的泵血过程", q:"微循环"},
+  {id:488, sub:"运动生理学", type:"大题", chap:"2. 心脏的泵血过程", q:"心血管活动的调节？"},
+  {id:489, sub:"运动生理学", type:"大题", chap:"2. 心脏的泵血过程", q:"神经调节？"},
+  {id:490, sub:"运动生理学", type:"大题", chap:"1. 心脏及血管的神经支配", q:"2. 心血管中枢？"},
+  {id:491, sub:"运动生理学", type:"大题", chap:"1. 心脏及血管的神经支配", q:"3. 心血管反射？"},
+  {id:492, sub:"运动生理学", type:"大题", chap:"1. 心脏及血管的神经支配", q:"体液调节？"},
+  {id:493, sub:"运动生理学", type:"大题", chap:"1. 心脏及血管的神经支配", q:"1. 肾上腺素和去甲肾上腺素？"},
+  {id:494, sub:"运动生理学", type:"大题", chap:"1. 心脏及血管的神经支配", q:"2. 肾素血管紧张素？"},
+  {id:495, sub:"运动生理学", type:"大题", chap:"1. 心脏及血管的神经支配", q:"3. 其他体液因素？"},
+  {id:496, sub:"运动生理学", type:"大题", chap:"1. 心脏及血管的神经支配", q:"自身调节？"},
+  {id:497, sub:"运动生理学", type:"大题", chap:"1. 心脏及血管的神经支配", q:"1. 代谢性自身调节？"},
+  {id:498, sub:"运动生理学", type:"大题", chap:"1. 心脏及血管的神经支配", q:"2. 肌源性自身调节？"},
+  {id:499, sub:"运动生理学", type:"大题", chap:"1. 心脏及血管的神经支配", q:"运动对心血管反射？"},
+  {id:500, sub:"运动生理学", type:"大题", chap:"1. 心脏及血管的神经支配", q:"心血管反射？"},
+  {id:501, sub:"运动生理学", type:"大题", chap:"1. 心脏及血管的神经支配", q:"运动时心血管功能的变化？"},
+  {id:502, sub:"运动生理学", type:"大题", chap:"1. 心脏及血管的神经支配", q:"血液重新分配？"},
+  {id:503, sub:"运动生理学", type:"大题", chap:"1. 心脏及血管的神经支配", q:"运动训练对心血管系统的影响？"},
+  {id:504, sub:"运动生理学", type:"大题", chap:"第九章", q:"消化腺的分泌及作用？"},
+  {id:505, sub:"运动生理学", type:"大题", chap:"第九章", q:"平滑肌的生理特性？"},
+  {id:506, sub:"运动生理学", type:"大题", chap:"第九章", q:"胃酸的生理作用？"},
+  {id:507, sub:"运动生理学", type:"大题", chap:"第九章", q:"为什么说小肠是消化和吸收的主要部位？"},
+  {id:508, sub:"运动生理学", type:"大题", chap:"第九章", q:"胆汁有哪些生理功能？"},
+  {id:509, sub:"运动生理学", type:"大题", chap:"第九章", q:"简述肾脏的功能？"},
+  {id:510, sub:"运动生理学", type:"大题", chap:"第九章", q:"简述大量出汗，引起尿量减少的机制？"},
+  {id:511, sub:"运动生理学", type:"大题", chap:"第九章", q:"简述长跑后尿量减少的原因？"},
+  {id:512, sub:"运动生理学", type:"大题", chap:"第九章", q:"试述胃液的性质成分和作用？"},
+  {id:513, sub:"运动生理学", type:"大题", chap:"第九章", q:"消化道各部位的消化？"},
+  {id:514, sub:"运动生理学", type:"大题", chap:"第九章", q:"口腔 胃小肠大肠？"},
+  {id:515, sub:"运动生理学", type:"大题", chap:"第九章", q:"小肠液的作用？"},
+  {id:516, sub:"运动生理学", type:"大题", chap:"第九章", q:"小肠吸收的特点及主要营养物质在小肠内的吸收？"},
+  {id:517, sub:"运动生理学", type:"大题", chap:"第九章", q:"胃的运动形式？"},
+  {id:518, sub:"运动生理学", type:"大题", chap:"第九章", q:"排泄"},
+  {id:519, sub:"运动生理学", type:"大题", chap:"第九章", q:"肾的基本结构功能，单位与血液循环？"},
+  {id:520, sub:"运动生理学", type:"大题", chap:"第九章", q:"运动对消化和吸收的影响？"},
+  {id:521, sub:"运动生理学", type:"大题", chap:"第九章", q:"肾血液循环的特点？"},
+  {id:522, sub:"运动生理学", type:"大题", chap:"第九章", q:"尿液生成？"},
+  {id:523, sub:"运动生理学", type:"大题", chap:"第九章", q:"影响肾小球滤过作用的因素？"},
+  {id:524, sub:"运动生理学", type:"大题", chap:"第九章", q:"肾在保持水和酸碱平衡中的作用？"},
+  {id:525, sub:"运动生理学", type:"大题", chap:"第九章", q:"运动对肾的影响？"},
+  {id:526, sub:"运动生理学", type:"大题", chap:"第九章", q:"1. 尿量？"},
+  {id:527, sub:"运动生理学", type:"大题", chap:"第10章", q:"力量素质的生理学基础？"},
+  {id:528, sub:"运动生理学", type:"大题", chap:"第10章", q:"标枪的引臂作用？"},
+  {id:529, sub:"运动生理学", type:"大题", chap:"第10章", q:"关节运动角度对肌力的影响？"},
+  {id:530, sub:"运动生理学", type:"大题", chap:"第10章", q:"简述抗阻训练，对肌肉神经及其代谢能力的影响？"},
+  {id:531, sub:"运动生理学", type:"大题", chap:"第10章", q:"核心力量训练的意义？"},
+  {id:532, sub:"运动生理学", type:"大题", chap:"第10章", q:"具体氧亏是如何形成？"},
+  {id:533, sub:"运动生理学", type:"大题", chap:"第10章", q:"影响过量氧耗的生理因素？"},
+  {id:534, sub:"运动生理学", type:"大题", chap:"第10章", q:"乳酸阈的作用？"},
+  {id:535, sub:"运动生理学", type:"大题", chap:"第10章", q:"低氧训练及其生理？"},
+  {id:536, sub:"运动生理学", type:"大题", chap:"第10章", q:"力量素质的测定？"},
+  {id:537, sub:"运动生理学", type:"大题", chap:"第10章", q:"最大肌肉力量、肌肉耐力、肌肉功率？"},
+  {id:538, sub:"运动生理学", type:"大题", chap:"第10章", q:"力量训练的训练？"},
+  {id:539, sub:"运动生理学", type:"大题", chap:"第10章", q:"力量训练的原则和方法？"},
+  {id:540, sub:"运动生理学", type:"大题", chap:"第10章", q:"等长训练和等张训练的区别？"},
+  {id:541, sub:"运动生理学", type:"大题", chap:"第10章", q:"等速训练方法特点及意义？"},
+  {id:542, sub:"运动生理学", type:"大题", chap:"第10章", q:"对抗负荷训练？"},
+  {id:543, sub:"运动生理学", type:"大题", chap:"第10章", q:"氧亏的形成？"},
+  {id:544, sub:"运动生理学", type:"大题", chap:"第10章", q:"影响运动后过量氧耗的主要生理因素？"},
+  {id:545, sub:"运动生理学", type:"大题", chap:"第10章", q:"乳酸阈的作用？"},
+  {id:546, sub:"运动生理学", type:"大题", chap:"第10章", q:"最大摄氧量和次最大摄氧量的测定方法的相同点？"},
+  {id:547, sub:"运动生理学", type:"大题", chap:"第10章", q:"速度素质的测定？"},
+  {id:548, sub:"运动生理学", type:"大题", chap:"第10章", q:"无氧耐力素质的测定？"},
+  {id:549, sub:"运动生理学", type:"大题", chap:"第10章", q:"影响最大摄氧量的因素？"},
+  {id:550, sub:"运动生理学", type:"大题", chap:"第10章", q:"无氧阈定义如何测量和运动中的意义？"},
+  {id:551, sub:"运动生理学", type:"大题", chap:"第10章", q:"速度素质的生理学基础？"},
+  {id:552, sub:"运动生理学", type:"大题", chap:"第10章", q:"非乳酸运动能力的测定？"},
+  {id:553, sub:"运动生理学", type:"大题", chap:"第10章", q:"速度素质的训练？"},
+  {id:554, sub:"运动生理学", type:"大题", chap:"第10章", q:"无氧耐力素质的生理学基础？"},
+  {id:555, sub:"运动生理学", type:"大题", chap:"第10章", q:"无氧耐力素质的测定？"},
+  {id:556, sub:"运动生理学", type:"大题", chap:"第10章", q:"无氧耐力素质的训练？"},
+  {id:557, sub:"运动生理学", type:"大题", chap:"第10章", q:"影响最大摄氧量的因素？"},
+  {id:558, sub:"运动生理学", type:"大题", chap:"第10章", q:"有氧耐力素质的生理学基础？"},
+  {id:559, sub:"运动生理学", type:"大题", chap:"第10章", q:"有氧耐力的训练？"},
+  {id:560, sub:"运动生理学", type:"大题", chap:"第10章", q:"平衡的生理学基础？"},
+  {id:561, sub:"运动生理学", type:"大题", chap:"第10章", q:"平衡能力的测定？"},
+  {id:562, sub:"运动生理学", type:"大题", chap:"第10章", q:"平衡能力的训练？"},
+  {id:563, sub:"运动生理学", type:"大题", chap:"第10章", q:"灵敏性的生理学基础？"},
+  {id:564, sub:"运动生理学", type:"大题", chap:"第10章", q:"灵敏性的评定？"},
+  {id:565, sub:"运动生理学", type:"大题", chap:"第10章", q:"灵敏性的训练？"},
+  {id:566, sub:"运动生理学", type:"大题", chap:"第10章", q:"柔韧的生理学基础？"},
+  {id:567, sub:"运动生理学", type:"大题", chap:"第10章", q:"柔韧性训练及其原则？"},
+  {id:568, sub:"运动生理学", type:"大题", chap:"第10章", q:"协调性的生理学基础？"},
+  {id:569, sub:"运动生理学", type:"大题", chap:"第10章", q:"身体素质训练的几种新方法？"},
+  {id:570, sub:"运动生理学", type:"大题", chap:"第10章", q:"1. 核心力量训练作用及生理学基础和训练方法？"},
+  {id:571, sub:"运动生理学", type:"大题", chap:"第10章", q:"2. 振动训练生理学基础基本方法？"},
+  {id:572, sub:"运动生理学", type:"大题", chap:"3. 呼吸基的生理学基础训练方法", q:"4. 低氧训练提高的机制和基本方法？"},
+  {id:573, sub:"运动生理学", type:"大题", chap:"3. 呼吸基的生理学基础训练方法", q:"呼吸机可训练性及训练方法？"},
+  {id:574, sub:"运动生理学", type:"大题", chap:"3. 呼吸基的生理学基础训练方法", q:"呼吸机训练可能提高运动能力的机制？"},
+  {id:575, sub:"运动生理学", type:"大题", chap:"3. 呼吸基的生理学基础训练方法", q:"低氧训练提高运动能力的机制？"},
+  {id:576, sub:"运动生理学", type:"大题", chap:"第11章", q:"人体在运动过程中不同的生理反应？"},
+  {id:577, sub:"运动生理学", type:"大题", chap:"第11章", q:"赛前状态的生理变化及其机制和调整？"},
+  {id:578, sub:"运动生理学", type:"大题", chap:"第11章", q:"简述运动性疲劳的分类？"},
+  {id:579, sub:"运动生理学", type:"大题", chap:"第11章", q:"超量恢复特点及其意义？"},
+  {id:580, sub:"运动生理学", type:"大题", chap:"第11章", q:"准备活动的生理作用？"},
+  {id:581, sub:"运动生理学", type:"大题", chap:"第11章", q:"进入工作状态产生的原因和影响的主要因素？"},
+  {id:582, sub:"运动生理学", type:"大题", chap:"第11章", q:"运动性疲劳的特点？"},
+  {id:583, sub:"运动生理学", type:"大题", chap:"第11章", q:"极点和第二次呼吸及影响？"},
+  {id:584, sub:"运动生理学", type:"大题", chap:"第11章", q:"真稳定和假稳定的区别？"},
+  {id:585, sub:"运动生理学", type:"大题", chap:"第11章", q:"运动性疲劳产生的生理机制？"},
+  {id:586, sub:"运动生理学", type:"大题", chap:"第11章", q:"外周机制和中枢机制？"},
+  {id:587, sub:"运动生理学", type:"大题", chap:"第11章", q:"运动性疲劳的检测指标？"},
+  {id:588, sub:"运动生理学", type:"大题", chap:"第11章", q:"恢复过程的一般规律？"},
+  {id:589, sub:"运动生理学", type:"大题", chap:"第11章", q:"1. 恢复过程的阶段特点？"},
+  {id:590, sub:"运动生理学", type:"大题", chap:"第11章", q:"2. 超量恢复？"},
+  {id:591, sub:"运动生理学", type:"大题", chap:"第11章", q:"乳酸穿梭？"},
+  {id:592, sub:"运动生理学", type:"大题", chap:"第11章", q:"促进恢复过程的措施？"},
+  {id:593, sub:"运动生理学", type:"大题", chap:"第11章", q:"整理运动和准备活动的区别？"},
+  {id:594, sub:"运动生理学", type:"大题", chap:"第11章", q:"脱训对身体机能的影响？"},
+  {id:595, sub:"运动生理学", type:"大题", chap:"第11章", q:"脱训应该注意的几个生理学问题？"},
+  {id:596, sub:"运动生理学", type:"大题", chap:"第11章", q:"尖峰状态训练？"},
+  {id:597, sub:"运动生理学", type:"大题", chap:"第12章", q:"运动技能分类？"},
+  {id:598, sub:"运动生理学", type:"大题", chap:"第12章", q:"条件反射和非条件反射的异同点？"},
+  {id:599, sub:"运动生理学", type:"大题", chap:"第12章", q:"比较非条件反射和条件反射的异同点？"},
+  {id:600, sub:"运动生理学", type:"大题", chap:"第12章", q:"闭锁式和开放式的异同点？"},
+  {id:601, sub:"运动生理学", type:"大题", chap:"第12章", q:"运动技能的生理本质？"},
+  {id:602, sub:"运动生理学", type:"大题", chap:"第12章", q:"运动技能形成的生理学机制？"},
+  {id:603, sub:"运动生理学", type:"大题", chap:"第12章", q:"运动技能形成的生理学本质？"},
+  {id:604, sub:"运动生理学", type:"大题", chap:"第12章", q:"身体素质和运动技能有何关系？"},
+  {id:605, sub:"运动生理学", type:"大题", chap:"第12章", q:"运动技能形成的过程？"},
+  {id:606, sub:"运动生理学", type:"大题", chap:"第12章", q:"影响运动技能形成的因素？"},
+  {id:607, sub:"运动生理学", type:"大题", chap:"第12章", q:"感觉机能在运动技能形成中的作用？"},
+  {id:608, sub:"运动生理学", type:"大题", chap:"第12章", q:"反馈在体育教学的应用🌟？"},
+  {id:609, sub:"运动生理学", type:"大题", chap:"第13章", q:"简述青春发育期的分期和特点？"},
+  {id:610, sub:"运动生理学", type:"大题", chap:"第13章", q:"儿童少年生长发育的一般规律？"},
+  {id:611, sub:"运动生理学", type:"大题", chap:"第13章", q:"如何根据儿童少年的胜利和身体素质发展的特点，进行各项身体素质的训练？"},
+  {id:612, sub:"运动生理学", type:"大题", chap:"第13章", q:"儿童少年的生理特点？"},
+  {id:613, sub:"运动生理学", type:"大题", chap:"第13章", q:"运动系统？"},
+  {id:614, sub:"运动生理学", type:"大题", chap:"第13章", q:"仰运输系统？"},
+  {id:615, sub:"运动生理学", type:"大题", chap:"第13章", q:"神经系统系？"},
+  {id:616, sub:"运动生理学", type:"大题", chap:"第13章", q:"儿童少年身体素质发展？"},
+  {id:617, sub:"运动生理学", type:"大题", chap:"1. 儿童少年身体素质发展规律", q:"2. 主要身体素质发展的年龄特点？"},
+  {id:618, sub:"运动生理学", type:"大题", chap:"1. 儿童少年身体素质发展规律", q:"女性的生理特点？"},
+  {id:619, sub:"运动生理学", type:"大题", chap:"1. 儿童少年身体素质发展规律", q:"青春性高血压？"},
+  {id:620, sub:"运动生理学", type:"大题", chap:"1. 儿童少年身体素质发展规律", q:"孕妇在孕期运动？"},
+  {id:621, sub:"运动生理学", type:"大题", chap:"1. 儿童少年身体素质发展规律", q:"老年人健身运动的原则？"},
+  {id:622, sub:"运动生理学", type:"大题", chap:"1. 儿童少年身体素质发展规律", q:"运动对于女子月经周期的影响？"},
+  {id:623, sub:"运动生理学", type:"大题", chap:"1. 儿童少年身体素质发展规律", q:"运动对于老年人的影响？"},
+  {id:624, sub:"运动生理学", type:"大题", chap:"1. 儿童少年身体素质发展规律", q:"老年人的生理特点？"},
+  {id:625, sub:"运动生理学", type:"大题", chap:"第14章", q:"身体成分与体重控制的意义？"},
+  {id:626, sub:"运动生理学", type:"大题", chap:"第14章", q:"肥胖的危害及其形成机制？"},
+  {id:627, sub:"运动生理学", type:"大题", chap:"第14章", q:"阅读减肥处方的制定原则及其实施过程中的注意事项？"},
+  {id:628, sub:"运动生理学", type:"大题", chap:"第14章", q:"肥胖的检测？"},
+  {id:629, sub:"运动生理学", type:"大题", chap:"第14章", q:"体重控制与运动减肥的生理学气质？"},
+  {id:630, sub:"运动生理学", type:"大题", chap:"第14章", q:"运动处方内容？"},
+  {id:631, sub:"运动生理学", type:"大题", chap:"第14章", q:"运动处方的原则及步骤？"},
+  {id:632, sub:"运动生理学", type:"大题", chap:"第14章", q:"运动处方的实施？"},
+  {id:633, sub:"运动生理学", type:"大题", chap:"第14章", q:"运动处方实施过程的自我监控？"},
+  {id:634, sub:"运动生理学", type:"大题", chap:"第15章", q:"体温调节机体的产热和散热？"},
+  {id:635, sub:"运动生理学", type:"大题", chap:"第15章", q:"运动与体温调节？"},
+  {id:636, sub:"运动生理学", type:"大题", chap:"第15章", q:"冷环境与运动？"},
+  {id:637, sub:"运动生理学", type:"大题", chap:"第15章", q:"冷伤害的预防？"},
+  {id:638, sub:"运动生理学", type:"大题", chap:"第15章", q:"冷适应的分类？"},
+  {id:639, sub:"运动生理学", type:"大题", chap:"1. 运动热应激及其生理学问题", q:"2. 热伤害的预防和处理？"},
+  {id:640, sub:"运动生理学", type:"大题", chap:"1. 运动热应激及其生理学问题", q:"水环境运动对人体生理功能的影响？"},
+  {id:641, sub:"运动生理学", type:"大题", chap:"1. 运动热应激及其生理学问题", q:"高原环境对运动能力的影响？"},
+  {id:642, sub:"运动生理学", type:"大题", chap:"1. 运动热应激及其生理学问题", q:"人体对高原环境对反应和适应？"},
+  {id:643, sub:"运动生理学", type:"大题", chap:"1. 运动热应激及其生理学问题", q:"大气污染对运动的影响？"},
+  {id:644, sub:"运动生理学", type:"大题", chap:"1. 运动热应激及其生理学问题", q:"体育锻炼应对大气污染的方法？"},
+  {id:645, sub:"运动生理学", type:"大题", chap:"1. 运动热应激及其生理学问题", q:"生物节律与运动能力？"},
+  {id:646, sub:"运动生理学", type:"大题", chap:"1. 运动热应激及其生理学问题", q:"运动员生物节律的调整？"},
+  {id:647, sub:"运动生理学", type:"大题", chap:"1. 运动热应激及其生理学问题", q:"高原西部的生理学基础及其意义？"},
+  {id:648, sub:"运动生理学", type:"大题", chap:"1. 运动热应激及其生理学问题", q:"人体运动时体温的变化调节及意义？"},
+  {id:649, sub:"运动生理学", type:"名词解释", chap:"", q:"人体生理学"},
+  {id:650, sub:"运动生理学", type:"名词解释", chap:"", q:"运动生理学"},
+  {id:651, sub:"运动生理学", type:"名词解释", chap:"", q:"运动生理学任务"},
+  {id:652, sub:"运动生理学", type:"名词解释", chap:"", q:"绝对不应期:紧接兴奋之后，出现一个非常短暂的绝对不应期，兴奋性水平降低到零。此 时无论给予刺激的强度多大，都不能引起第二次兴奋。从时间关系来说，锋电位相当于细胞 的绝对不应期。"},
+  {id:653, sub:"运动生理学", type:"名词解释", chap:"", q:"新陈代谢"},
+  {id:654, sub:"运动生理学", type:"名词解释", chap:"", q:"兴奋性"},
+  {id:655, sub:"运动生理学", type:"名词解释", chap:"", q:"兴奋"},
+  {id:656, sub:"运动生理学", type:"名词解释", chap:"", q:"反应"},
+  {id:657, sub:"运动生理学", type:"名词解释", chap:"", q:"刺激"},
+  {id:658, sub:"运动生理学", type:"名词解释", chap:"", q:"23.基强度:是指能引起组织的最低的或最基本的阈强度兴奋。"},
+  {id:659, sub:"运动生理学", type:"名词解释", chap:"", q:"24.时值:是指以2 倍基强度刺激组织，刚能引起组织兴奋所需的最短作用时间。时值越小，神经肌肉兴奋性越高，反 之就越低。时值是评价阈强度的常用指标。"},
+  {id:660, sub:"运动生理学", type:"名词解释", chap:"", q:"内环境"},
+  {id:661, sub:"运动生理学", type:"名词解释", chap:"", q:"稳态"},
+  {id:662, sub:"运动生理学", type:"名词解释", chap:"", q:"调节"},
+  {id:663, sub:"运动生理学", type:"名词解释", chap:"", q:"神经调节"},
+  {id:664, sub:"运动生理学", type:"名词解释", chap:"", q:"反射"},
+  {id:665, sub:"运动生理学", type:"名词解释", chap:"", q:"体液调节"},
+  {id:666, sub:"运动生理学", type:"名词解释", chap:"", q:"自身调节"},
+  {id:667, sub:"运动生理学", type:"名词解释", chap:"", q:"反馈"},
+  {id:668, sub:"运动生理学", type:"名词解释", chap:"", q:"正反馈"},
+  {id:669, sub:"运动生理学", type:"名词解释", chap:"", q:"负反馈"},
+  {id:670, sub:"运动生理学", type:"名词解释", chap:"", q:"前馈"},
+  {id:671, sub:"运动生理学", type:"名词解释", chap:"", q:"生殖"},
+  {id:672, sub:"运动生理学", type:"名词解释", chap:"", q:"兴奋"},
+  {id:673, sub:"运动生理学", type:"名词解释", chap:"", q:"可兴奋细胞"},
+  {id:674, sub:"运动生理学", type:"名词解释", chap:"", q:"静息电位"},
+  {id:675, sub:"运动生理学", type:"名词解释", chap:"", q:"动作电位"},
+  {id:676, sub:"运动生理学", type:"名词解释", chap:"", q:"传导"},
+  {id:677, sub:"运动生理学", type:"名词解释", chap:"", q:"神经冲动"},
+  {id:678, sub:"运动生理学", type:"名词解释", chap:"", q:"横纹肌"},
+  {id:679, sub:"运动生理学", type:"名词解释", chap:"", q:"肌小节"},
+  {id:680, sub:"运动生理学", type:"名词解释", chap:"", q:"神经肌肉接点"},
+  {id:681, sub:"运动生理学", type:"名词解释", chap:"", q:"横管系统"},
+  {id:682, sub:"运动生理学", type:"名词解释", chap:"", q:"纵管系统"},
+  {id:683, sub:"运动生理学", type:"名词解释", chap:"", q:"横桥"},
+  {id:684, sub:"运动生理学", type:"名词解释", chap:"", q:"肌管系统"},
+  {id:685, sub:"运动生理学", type:"名词解释", chap:"", q:"缩短收缩"},
+  {id:686, sub:"运动生理学", type:"名词解释", chap:"", q:"拉长收缩"},
+  {id:687, sub:"运动生理学", type:"名词解释", chap:"", q:"等动收缩"},
+  {id:688, sub:"运动生理学", type:"名词解释", chap:"", q:"等张收缩"},
+  {id:689, sub:"运动生理学", type:"名词解释", chap:"", q:"等长收缩"},
+  {id:690, sub:"运动生理学", type:"名词解释", chap:"", q:"延迟性肌肉酸痛"},
+  {id:691, sub:"运动生理学", type:"名词解释", chap:"", q:"绝对力量"},
+  {id:692, sub:"运动生理学", type:"名词解释", chap:"", q:"相对力量"},
+  {id:693, sub:"运动生理学", type:"名词解释", chap:"", q:"baoguo"},
+  {id:694, sub:"运动生理学", type:"名词解释", chap:"", q:"运动单位"},
+  {id:695, sub:"运动生理学", type:"名词解释", chap:"", q:"肌肉兴奋-收缩偶联"},
+  {id:696, sub:"运动生理学", type:"名词解释", chap:"", q:"收缩蛋白"},
+  {id:697, sub:"运动生理学", type:"名词解释", chap:"", q:"阈电位"},
+  {id:698, sub:"运动生理学", type:"名词解释", chap:"", q:"阈强度"},
+  {id:699, sub:"运动生理学", type:"名词解释", chap:"", q:"去极化"},
+  {id:700, sub:"运动生理学", type:"名词解释", chap:"", q:"复极化"},
+  {id:701, sub:"运动生理学", type:"名词解释", chap:"", q:"超极化"},
+  {id:702, sub:"运动生理学", type:"名词解释", chap:"", q:"超射"},
+  {id:703, sub:"运动生理学", type:"名词解释", chap:"", q:"前负荷"},
+  {id:704, sub:"运动生理学", type:"名词解释", chap:"", q:"后负荷"},
+  {id:705, sub:"运动生理学", type:"名词解释", chap:"", q:"肌肉收缩能力"},
+  {id:706, sub:"运动生理学", type:"名词解释", chap:"", q:"强直收缩"},
+  {id:707, sub:"运动生理学", type:"名词解释", chap:"", q:"肌纤维类型"},
+  {id:708, sub:"运动生理学", type:"名词解释", chap:"", q:"快运动单位"},
+  {id:709, sub:"运动生理学", type:"名词解释", chap:"", q:"慢运动单位"},
+  {id:710, sub:"运动生理学", type:"名词解释", chap:"", q:"局部反应"},
+  {id:711, sub:"运动生理学", type:"名词解释", chap:"", q:"刺激"},
+  {id:712, sub:"运动生理学", type:"名词解释", chap:"", q:"反应兴奋和抑制"},
+  {id:713, sub:"运动生理学", type:"名词解释", chap:"", q:"生物电"},
+  {id:714, sub:"运动生理学", type:"名词解释", chap:"", q:"兴奋性"},
+  {id:715, sub:"运动生理学", type:"名词解释", chap:"", q:"能量代谢"},
+  {id:716, sub:"运动生理学", type:"名词解释", chap:"", q:"ATP"},
+  {id:717, sub:"运动生理学", type:"名词解释", chap:"", q:"ATP稳态"},
+  {id:718, sub:"运动生理学", type:"名词解释", chap:"", q:"磷酸原系统"},
+  {id:719, sub:"运动生理学", type:"名词解释", chap:"", q:"糖酵解系统"},
+  {id:720, sub:"运动生理学", type:"名词解释", chap:"", q:"有氧化系统"},
+  {id:721, sub:"运动生理学", type:"名词解释", chap:"", q:"热价"},
+  {id:722, sub:"运动生理学", type:"名词解释", chap:"", q:"氧热价"},
+  {id:723, sub:"运动生理学", type:"名词解释", chap:"", q:"呼吸商"},
+  {id:724, sub:"运动生理学", type:"名词解释", chap:"", q:"物理热价"},
+  {id:725, sub:"运动生理学", type:"名词解释", chap:"", q:"生物热价"},
+  {id:726, sub:"运动生理学", type:"名词解释", chap:"", q:"基础代谢"},
+  {id:727, sub:"运动生理学", type:"名词解释", chap:"", q:"基础代谢率"},
+  {id:728, sub:"运动生理学", type:"名词解释", chap:"", q:"食物特殊动力效应"},
+  {id:729, sub:"运动生理学", type:"名词解释", chap:"", q:"神经纤维"},
+  {id:730, sub:"运动生理学", type:"名词解释", chap:"", q:"神经传导"},
+  {id:731, sub:"运动生理学", type:"名词解释", chap:"", q:"兴奋性突触后电位"},
+  {id:732, sub:"运动生理学", type:"名词解释", chap:"", q:"抑制性突触后电位"},
+  {id:733, sub:"运动生理学", type:"名词解释", chap:"", q:"化学突触"},
+  {id:734, sub:"运动生理学", type:"名词解释", chap:"", q:"突触"},
+  {id:735, sub:"运动生理学", type:"名词解释", chap:"", q:"突触传递"},
+  {id:736, sub:"运动生理学", type:"名词解释", chap:"", q:"突触前抑制"},
+  {id:737, sub:"运动生理学", type:"名词解释", chap:"", q:"突触后抑制"},
+  {id:738, sub:"运动生理学", type:"名词解释", chap:"", q:"交互抑制（传入侧枝抑制）"},
+  {id:739, sub:"运动生理学", type:"名词解释", chap:"", q:"回返抑制"},
+  {id:740, sub:"运动生理学", type:"名词解释", chap:"", q:"突触小体"},
+  {id:741, sub:"运动生理学", type:"名词解释", chap:"", q:"轴突始段（轴丘）"},
+  {id:742, sub:"运动生理学", type:"名词解释", chap:"", q:"突触后易化"},
+  {id:743, sub:"运动生理学", type:"名词解释", chap:"", q:"突触前易化"},
+  {id:744, sub:"运动生理学", type:"名词解释", chap:"", q:"感受器"},
+  {id:745, sub:"运动生理学", type:"名词解释", chap:"", q:"牵张反射"},
+  {id:746, sub:"运动生理学", type:"名词解释", chap:"", q:"健反射"},
+  {id:747, sub:"运动生理学", type:"名词解释", chap:"", q:"肌紧张"},
+  {id:748, sub:"运动生理学", type:"名词解释", chap:"", q:"状态反射"},
+  {id:749, sub:"运动生理学", type:"名词解释", chap:"", q:"劲紧张反射"},
+  {id:750, sub:"运动生理学", type:"名词解释", chap:"", q:"屈肌反射"},
+  {id:751, sub:"运动生理学", type:"名词解释", chap:"", q:"迷路紧张反射"},
+  {id:752, sub:"运动生理学", type:"名词解释", chap:"", q:"侧伸肌反射"},
+  {id:753, sub:"运动生理学", type:"名词解释", chap:"", q:"姿势反射"},
+  {id:754, sub:"运动生理学", type:"名词解释", chap:"", q:"翻正反射"},
+  {id:755, sub:"运动生理学", type:"名词解释", chap:"", q:"脑干网状区"},
+  {id:756, sub:"运动生理学", type:"名词解释", chap:"", q:"特异神经能量定律"},
+  {id:757, sub:"运动生理学", type:"名词解释", chap:"", q:"视锥"},
+  {id:758, sub:"运动生理学", type:"名词解释", chap:"", q:"视杆"},
+  {id:759, sub:"运动生理学", type:"名词解释", chap:"", q:"最后通路"},
+  {id:760, sub:"运动生理学", type:"名词解释", chap:"", q:"运动神经元池"},
+  {id:761, sub:"运动生理学", type:"名词解释", chap:"", q:"轴浆运输"},
+  {id:762, sub:"运动生理学", type:"名词解释", chap:"", q:"电突触（缝隙连接）"},
+  {id:763, sub:"运动生理学", type:"名词解释", chap:"", q:"单线式联系"},
+  {id:764, sub:"运动生理学", type:"名词解释", chap:"", q:"聚合式联系"},
+  {id:765, sub:"运动生理学", type:"名词解释", chap:"", q:"辐散式联系"},
+  {id:766, sub:"运动生理学", type:"名词解释", chap:"", q:"链锁式或环式联系"},
+  {id:767, sub:"运动生理学", type:"名词解释", chap:"", q:"非条件反射"},
+  {id:768, sub:"运动生理学", type:"名词解释", chap:"", q:"条件反射"},
+  {id:769, sub:"运动生理学", type:"名词解释", chap:"", q:"反射"},
+  {id:770, sub:"运动生理学", type:"名词解释", chap:"", q:"躯体感觉"},
+  {id:771, sub:"运动生理学", type:"名词解释", chap:"", q:"本体感受器"},
+  {id:772, sub:"运动生理学", type:"名词解释", chap:"", q:"肌梭"},
+  {id:773, sub:"运动生理学", type:"名词解释", chap:"", q:"健器官"},
+  {id:774, sub:"运动生理学", type:"名词解释", chap:"", q:"前庭器官"},
+  {id:775, sub:"运动生理学", type:"名词解释", chap:"", q:"前庭反应"},
+  {id:776, sub:"运动生理学", type:"名词解释", chap:"", q:"反射性运动"},
+  {id:777, sub:"运动生理学", type:"名词解释", chap:"", q:"形式化运动"},
+  {id:778, sub:"运动生理学", type:"名词解释", chap:"", q:"意向性运动"},
+  {id:779, sub:"运动生理学", type:"名词解释", chap:"", q:"运动单位"},
+  {id:780, sub:"运动生理学", type:"名词解释", chap:"", q:"a-r共同激活"},
+  {id:781, sub:"运动生理学", type:"名词解释", chap:"", q:"激素"},
+  {id:782, sub:"运动生理学", type:"名词解释", chap:"", q:"内分泌"},
+  {id:783, sub:"运动生理学", type:"名词解释", chap:"", q:"内分泌系统"},
+  {id:784, sub:"运动生理学", type:"名词解释", chap:"", q:"远距分泌"},
+  {id:785, sub:"运动生理学", type:"名词解释", chap:"", q:"旁分泌"},
+  {id:786, sub:"运动生理学", type:"名词解释", chap:"", q:"自分泌"},
+  {id:787, sub:"运动生理学", type:"名词解释", chap:"", q:"神经分泌"},
+  {id:788, sub:"运动生理学", type:"名词解释", chap:"", q:"腔分泌"},
+  {id:789, sub:"运动生理学", type:"名词解释", chap:"", q:"允许作用"},
+  {id:790, sub:"运动生理学", type:"名词解释", chap:"", q:"应急"},
+  {id:791, sub:"运动生理学", type:"名词解释", chap:"", q:"应激"},
+  {id:792, sub:"运动生理学", type:"名词解释", chap:"", q:"免疫"},
+  {id:793, sub:"运动生理学", type:"名词解释", chap:"", q:"免疫防御"},
+  {id:794, sub:"运动生理学", type:"名词解释", chap:"", q:"免疫稳定"},
+  {id:795, sub:"运动生理学", type:"名词解释", chap:"", q:"免疫监控"},
+  {id:796, sub:"运动生理学", type:"名词解释", chap:"", q:"抗原"},
+  {id:797, sub:"运动生理学", type:"名词解释", chap:"", q:"抗体"},
+  {id:798, sub:"运动生理学", type:"名词解释", chap:"", q:"补体"},
+  {id:799, sub:"运动生理学", type:"名词解释", chap:"", q:"免疫调理"},
+  {id:800, sub:"运动生理学", type:"名词解释", chap:"", q:"细胞因子"},
+  {id:801, sub:"运动生理学", type:"名词解释", chap:"", q:"红细胞比容"},
+  {id:802, sub:"运动生理学", type:"名词解释", chap:"", q:"建储备"},
+  {id:803, sub:"运动生理学", type:"名词解释", chap:"", q:"运动性贫血"},
+  {id:804, sub:"运动生理学", type:"名词解释", chap:"", q:"贫血"},
+  {id:805, sub:"运动生理学", type:"名词解释", chap:"", q:"吞噬"},
+  {id:806, sub:"运动生理学", type:"名词解释", chap:"", q:"血液"},
+  {id:807, sub:"运动生理学", type:"名词解释", chap:"", q:"循环血量"},
+  {id:808, sub:"运动生理学", type:"名词解释", chap:"", q:"储存血量"},
+  {id:809, sub:"运动生理学", type:"名词解释", chap:"", q:"成熟的红细胞"},
+  {id:810, sub:"运动生理学", type:"名词解释", chap:"", q:"血小板"},
+  {id:811, sub:"运动生理学", type:"名词解释", chap:"", q:"白细胞"},
+  {id:812, sub:"运动生理学", type:"名词解释", chap:"", q:"渗透压"},
+  {id:813, sub:"运动生理学", type:"名词解释", chap:"", q:"腹式呼吸"},
+  {id:814, sub:"运动生理学", type:"名词解释", chap:"", q:"胸式呼吸"},
+  {id:815, sub:"运动生理学", type:"名词解释", chap:"", q:"肺通气"},
+  {id:816, sub:"运动生理学", type:"名词解释", chap:"", q:"功能余气量"},
+  {id:817, sub:"运动生理学", type:"名词解释", chap:"", q:"深吸气量"},
+  {id:818, sub:"运动生理学", type:"名词解释", chap:"", q:"肺活量"},
+  {id:819, sub:"运动生理学", type:"名词解释", chap:"", q:"时间肺活量"},
+  {id:820, sub:"运动生理学", type:"名词解释", chap:"", q:"肺通气量"},
+  {id:821, sub:"运动生理学", type:"名词解释", chap:"", q:"解剖无效腔"},
+  {id:822, sub:"运动生理学", type:"名词解释", chap:"", q:"最大随意通气量"},
+  {id:823, sub:"运动生理学", type:"名词解释", chap:"", q:"氧通气放量"},
+  {id:824, sub:"运动生理学", type:"名词解释", chap:"", q:"气体运输"},
+  {id:825, sub:"运动生理学", type:"名词解释", chap:"", q:"通气血流比值"},
+  {id:826, sub:"运动生理学", type:"名词解释", chap:"", q:"Hb氧容量"},
+  {id:827, sub:"运动生理学", type:"名词解释", chap:"", q:"Hb氧含量"},
+  {id:828, sub:"运动生理学", type:"名词解释", chap:"", q:"Hb氧饱和度"},
+  {id:829, sub:"运动生理学", type:"名词解释", chap:"", q:"氧解离曲线"},
+  {id:830, sub:"运动生理学", type:"名词解释", chap:"", q:"氧储备"},
+  {id:831, sub:"运动生理学", type:"名词解释", chap:"", q:"氧利用系数"},
+  {id:832, sub:"运动生理学", type:"名词解释", chap:"", q:"氧脉博"},
+  {id:833, sub:"运动生理学", type:"名词解释", chap:"", q:"肺牵张反射"},
+  {id:834, sub:"运动生理学", type:"名词解释", chap:"", q:"呼吸肌本体感受性反射"},
+  {id:835, sub:"运动生理学", type:"名词解释", chap:"", q:"血液循环"},
+  {id:836, sub:"运动生理学", type:"名词解释", chap:"", q:"自动节律性"},
+  {id:837, sub:"运动生理学", type:"名词解释", chap:"", q:"房室延搁"},
+  {id:838, sub:"运动生理学", type:"名词解释", chap:"", q:"代偿间歇"},
+  {id:839, sub:"运动生理学", type:"名词解释", chap:"", q:"期前收缩 早搏"},
+  {id:840, sub:"运动生理学", type:"名词解释", chap:"", q:"心动周期"},
+  {id:841, sub:"运动生理学", type:"名词解释", chap:"", q:"心输出量"},
+  {id:842, sub:"运动生理学", type:"名词解释", chap:"", q:"心指数"},
+  {id:843, sub:"运动生理学", type:"名词解释", chap:"", q:"脉搏"},
+  {id:844, sub:"运动生理学", type:"名词解释", chap:"", q:"心率"},
+  {id:845, sub:"运动生理学", type:"名词解释", chap:"", q:"每搏输出量"},
+  {id:846, sub:"运动生理学", type:"名词解释", chap:"", q:"射血分数"},
+  {id:847, sub:"运动生理学", type:"名词解释", chap:"", q:"心力储备"},
+  {id:848, sub:"运动生理学", type:"名词解释", chap:"", q:"血压"},
+  {id:849, sub:"运动生理学", type:"名词解释", chap:"", q:"收缩压"},
+  {id:850, sub:"运动生理学", type:"名词解释", chap:"", q:"舒张压"},
+  {id:851, sub:"运动生理学", type:"名词解释", chap:"", q:"平均动脉压"},
+  {id:852, sub:"运动生理学", type:"名词解释", chap:"", q:"运动员心脏肥大"},
+  {id:853, sub:"运动生理学", type:"名词解释", chap:"", q:"异长自身调节"},
+  {id:854, sub:"运动生理学", type:"名词解释", chap:"", q:"最佳心率范围"},
+  {id:855, sub:"运动生理学", type:"名词解释", chap:"", q:"心博峰"},
+  {id:856, sub:"运动生理学", type:"名词解释", chap:"", q:"动脉脉博"},
+  {id:857, sub:"运动生理学", type:"名词解释", chap:"", q:"微循环"},
+  {id:858, sub:"运动生理学", type:"名词解释", chap:"", q:"血液的重新分配"},
+  {id:859, sub:"运动生理学", type:"名词解释", chap:"", q:"消化"},
+  {id:860, sub:"运动生理学", type:"名词解释", chap:"", q:"吸收"},
+  {id:861, sub:"运动生理学", type:"名词解释", chap:"", q:"机械性消化"},
+  {id:862, sub:"运动生理学", type:"名词解释", chap:"", q:"化学性消化"},
+  {id:863, sub:"运动生理学", type:"名词解释", chap:"", q:"容受性舒张"},
+  {id:864, sub:"运动生理学", type:"名词解释", chap:"", q:"紧张性收缩"},
+  {id:865, sub:"运动生理学", type:"名词解释", chap:"", q:"排泄"},
+  {id:866, sub:"运动生理学", type:"名词解释", chap:"", q:"肾单位"},
+  {id:867, sub:"运动生理学", type:"名词解释", chap:"", q:"血红蛋白尿"},
+  {id:868, sub:"运动生理学", type:"名词解释", chap:"", q:"肾糖阈"},
+  {id:869, sub:"运动生理学", type:"名词解释", chap:"", q:"肾小球滤过率"},
+  {id:870, sub:"运动生理学", type:"名词解释", chap:"", q:"运动性蛋白尿"},
+  {id:871, sub:"运动生理学", type:"名词解释", chap:"", q:"运动性血尿"},
+  {id:872, sub:"运动生理学", type:"名词解释", chap:"", q:"力量素质"},
+  {id:873, sub:"运动生理学", type:"名词解释", chap:"", q:"超负荷原则"},
+  {id:874, sub:"运动生理学", type:"名词解释", chap:"", q:"中枢激活"},
+  {id:875, sub:"运动生理学", type:"名词解释", chap:"", q:"肌肉生理横断面积"},
+  {id:876, sub:"运动生理学", type:"名词解释", chap:"", q:"最大随意力量"},
+  {id:877, sub:"运动生理学", type:"名词解释", chap:"", q:"快速力量"},
+  {id:878, sub:"运动生理学", type:"名词解释", chap:"", q:"力量耐力"},
+  {id:879, sub:"运动生理学", type:"名词解释", chap:"", q:"反应时"},
+  {id:880, sub:"运动生理学", type:"名词解释", chap:"", q:"速度素质"},
+  {id:881, sub:"运动生理学", type:"名词解释", chap:"", q:"反应速度"},
+  {id:882, sub:"运动生理学", type:"名词解释", chap:"", q:"位移速度"},
+  {id:883, sub:"运动生理学", type:"名词解释", chap:"", q:"动作速度"},
+  {id:884, sub:"运动生理学", type:"名词解释", chap:"", q:"运动后过量氧耗"},
+  {id:885, sub:"运动生理学", type:"名词解释", chap:"", q:"氧亏"},
+  {id:886, sub:"运动生理学", type:"名词解释", chap:"", q:"平衡"},
+  {id:887, sub:"运动生理学", type:"名词解释", chap:"", q:"灵敏"},
+  {id:888, sub:"运动生理学", type:"名词解释", chap:"", q:"柔韧"},
+  {id:889, sub:"运动生理学", type:"名词解释", chap:"", q:"有氧运动"},
+  {id:890, sub:"运动生理学", type:"名词解释", chap:"", q:"无氧耐力"},
+  {id:891, sub:"运动生理学", type:"名词解释", chap:"", q:"需氧量"},
+  {id:892, sub:"运动生理学", type:"名词解释", chap:"", q:"摄氧量"},
+  {id:893, sub:"运动生理学", type:"名词解释", chap:"", q:"最大摄氧量"},
+  {id:894, sub:"运动生理学", type:"名词解释", chap:"", q:"核心力量"},
+  {id:895, sub:"运动生理学", type:"名词解释", chap:"", q:"振动训练"},
+  {id:896, sub:"运动生理学", type:"名词解释", chap:"", q:"协调"},
+  {id:897, sub:"运动生理学", type:"名词解释", chap:"", q:"耐力比和50%衰减试验"},
+  {id:898, sub:"运动生理学", type:"名词解释", chap:"", q:"无氧阈"},
+  {id:899, sub:"运动生理学", type:"名词解释", chap:"", q:"通气阈"},
+  {id:900, sub:"运动生理学", type:"名词解释", chap:"", q:"乳酸阈"},
+  {id:901, sub:"运动生理学", type:"名词解释", chap:"", q:"低氧训练"},
+  {id:902, sub:"运动生理学", type:"名词解释", chap:"", q:"身体素质"},
+  {id:903, sub:"运动生理学", type:"名词解释", chap:"", q:"等长肌力"},
+  {id:904, sub:"运动生理学", type:"名词解释", chap:"", q:"等张肌力"},
+  {id:905, sub:"运动生理学", type:"名词解释", chap:"", q:"RM"},
+  {id:906, sub:"运动生理学", type:"名词解释", chap:"", q:"等速肌力"},
+  {id:907, sub:"运动生理学", type:"名词解释", chap:"", q:"肌肉功率"},
+  {id:908, sub:"运动生理学", type:"名词解释", chap:"", q:"爆发力"},
+  {id:909, sub:"运动生理学", type:"名词解释", chap:"", q:"核心区"},
+  {id:910, sub:"运动生理学", type:"名词解释", chap:"", q:"赛前状态"},
+  {id:911, sub:"运动生理学", type:"名词解释", chap:"", q:"准备活动"},
+  {id:912, sub:"运动生理学", type:"名词解释", chap:"", q:"进入工作状态"},
+  {id:913, sub:"运动生理学", type:"名词解释", chap:"", q:"稳定状态"},
+  {id:914, sub:"运动生理学", type:"名词解释", chap:"", q:"极点"},
+  {id:915, sub:"运动生理学", type:"名词解释", chap:"", q:"第二次呼吸"},
+  {id:916, sub:"运动生理学", type:"名词解释", chap:"", q:"真稳定"},
+  {id:917, sub:"运动生理学", type:"名词解释", chap:"", q:"假稳定"},
+  {id:918, sub:"运动生理学", type:"名词解释", chap:"", q:"运动型疲劳"},
+  {id:919, sub:"运动生理学", type:"名词解释", chap:"", q:"运动型力竭"},
+  {id:920, sub:"运动生理学", type:"名词解释", chap:"", q:"自由基"},
+  {id:921, sub:"运动生理学", type:"名词解释", chap:"", q:"恢复过程"},
+  {id:922, sub:"运动生理学", type:"名词解释", chap:"", q:"乳酸"},
+  {id:923, sub:"运动生理学", type:"名词解释", chap:"", q:"整理活动"},
+  {id:924, sub:"运动生理学", type:"名词解释", chap:"", q:"脱训"},
+  {id:925, sub:"运动生理学", type:"名词解释", chap:"", q:"尖峰状态"},
+  {id:926, sub:"运动生理学", type:"名词解释", chap:"", q:"运动技能"},
+  {id:927, sub:"运动生理学", type:"名词解释", chap:"", q:"运动动力定型"},
+  {id:928, sub:"运动生理学", type:"名词解释", chap:"", q:"生长发育"},
+  {id:929, sub:"运动生理学", type:"名词解释", chap:"", q:"身体的敏感期"},
+  {id:930, sub:"运动生理学", type:"名词解释", chap:"", q:"身体发育的自然增长"},
+  {id:931, sub:"运动生理学", type:"名词解释", chap:"", q:"月经周期"},
+  {id:932, sub:"运动生理学", type:"名词解释", chap:"", q:"月经"},
+  {id:933, sub:"运动生理学", type:"名词解释", chap:"", q:"运动性月经失调"},
+  {id:934, sub:"运动生理学", type:"名词解释", chap:"", q:"妊娠"},
+  {id:935, sub:"运动生理学", type:"名词解释", chap:"", q:"青春发育期"},
+  {id:936, sub:"运动生理学", type:"名词解释", chap:"", q:"青春性高血压"},
+  {id:937, sub:"运动生理学", type:"名词解释", chap:"", q:"身体成分"},
+  {id:938, sub:"运动生理学", type:"名词解释", chap:"", q:"肥胖"},
+  {id:939, sub:"运动生理学", type:"名词解释", chap:"", q:"体质指数"},
+  {id:940, sub:"运动生理学", type:"名词解释", chap:"", q:"运动处方"},
+  {id:941, sub:"运动生理学", type:"名词解释", chap:"", q:"基础心率"},
+  {id:942, sub:"运动生理学", type:"名词解释", chap:"", q:"梅脱"},
+  {id:943, sub:"运动生理学", type:"名词解释", chap:"", q:"靶心率"},
+  {id:944, sub:"运动生理学", type:"名词解释", chap:"", q:"体温调节"},
+  {id:945, sub:"运动生理学", type:"名词解释", chap:"", q:"中暑"},
+  {id:946, sub:"运动生理学", type:"名词解释", chap:"", q:"热痉挛"},
+  {id:947, sub:"运动生理学", type:"名词解释", chap:"", q:"热习服"},
+  {id:948, sub:"运动生理学", type:"名词解释", chap:"", q:"冷习服"},
+  {id:949, sub:"运动生理学", type:"名词解释", chap:"", q:"高原习服"},
+  {id:950, sub:"运动生理学", type:"名词解释", chap:"", q:"高原病"},
+  {id:951, sub:"运动生理学", type:"名词解释", chap:"", q:"高原应激"},
+  {id:952, sub:"运动生理学", type:"名词解释", chap:"", q:"生物节律"},
+  {id:953, sub:"运动生理学", type:"名词解释", chap:"", q:"热衰竭"},
+  {id:954, sub:"学校体育学", type:"大题", chap:"第一章", q:"我国近代学校体育的演变和发展？"},
+  {id:955, sub:"学校体育学", type:"大题", chap:"第一章", q:"现代发展？"},
+  {id:956, sub:"学校体育学", type:"大题", chap:"第一章", q:"我国学校体育思想的借鉴与探索阶段？"},
+  {id:957, sub:"学校体育学", type:"大题", chap:"第一章", q:"我国学校体育思想的本土化和现代化？"},
+  {id:958, sub:"学校体育学", type:"大题", chap:"第一章", q:"国外学校体育未来发展趋势？"},
+  {id:959, sub:"学校体育学", type:"大题", chap:"第一章", q:"国内学校体育发展趋势？"},
+  {id:960, sub:"学校体育学", type:"大题", chap:"第一章", q:"军国民思想的特点和影响？"},
+  {id:961, sub:"学校体育学", type:"大题", chap:"第一章", q:"自然主义体育思想特点和影响？"},
+  {id:962, sub:"学校体育学", type:"大题", chap:"第一章", q:"苏联体育特点和影响？"},
+  {id:963, sub:"学校体育学", type:"大题", chap:"第一章", q:"体质教育思想的特点和影响？"},
+  {id:964, sub:"学校体育学", type:"大题", chap:"第一章", q:"健康第一的特点和影响？"},
+  {id:965, sub:"学校体育学", type:"大题", chap:"第一章", q:"终身体育的特点和影响？"},
+  {id:966, sub:"学校体育学", type:"大题", chap:"第一章", q:"学校体育思想未来发展趋势？"},
+  {id:967, sub:"学校体育学", type:"大题", chap:"第二章", q:"学校体育与现代社会？"},
+  {id:968, sub:"学校体育学", type:"大题", chap:"第二章", q:"三大国家战略对学校体育要求？"},
+  {id:969, sub:"学校体育学", type:"大题", chap:"第二章", q:"学校体育助力三大国家战略实施的路径？"},
+  {id:970, sub:"学校体育学", type:"大题", chap:"第二章", q:"学校体育的结构？"},
+  {id:971, sub:"学校体育学", type:"大题", chap:"第二章", q:"学校体育的功能？"},
+  {id:972, sub:"学校体育学", type:"大题", chap:"第二章", q:"学校体育总目标？"},
+  {id:973, sub:"学校体育学", type:"大题", chap:"第二章", q:"体育与健康课程目标？"},
+  {id:974, sub:"学校体育学", type:"大题", chap:"第二章", q:"学生全面发展的基本内涵？"},
+  {id:975, sub:"学校体育学", type:"大题", chap:"第二章", q:"学校体育对学生全面发展的作用？"},
+  {id:976, sub:"学校体育学", type:"大题", chap:"第二章", q:"学校体育实现学生全面发展的措施？"},
+  {id:977, sub:"学校体育学", type:"大题", chap:"第三章", q:"体育与健康课程编制逻辑？"},
+  {id:978, sub:"学校体育学", type:"大题", chap:"第三章", q:"体育与健康课程编制的学科基础？"},
+  {id:979, sub:"学校体育学", type:"大题", chap:"第三章", q:"1.体育与健康编制的生物学基础？"},
+  {id:980, sub:"学校体育学", type:"大题", chap:"第三章", q:"2.体育与健康编制的心理学基础？"},
+  {id:981, sub:"学校体育学", type:"大题", chap:"第三章", q:"3.体育与健康编制的教育学基础？"},
+  {id:982, sub:"学校体育学", type:"大题", chap:"第三章", q:"4.体育与健康编制的的社会学基础？"},
+  {id:983, sub:"学校体育学", type:"大题", chap:"第三章", q:"体育与健康课程编制的程序？"},
+  {id:984, sub:"学校体育学", type:"大题", chap:"第三章", q:"确定体育健康课程的目标？"},
+  {id:985, sub:"学校体育学", type:"大题", chap:"第三章", q:"体育与健康课程目标分类？"},
+  {id:986, sub:"学校体育学", type:"大题", chap:"第三章", q:"确定体育与健康课程目标的依据？"},
+  {id:987, sub:"学校体育学", type:"大题", chap:"第三章", q:"确定体育与健康课程目标的步骤？"},
+  {id:988, sub:"学校体育学", type:"大题", chap:"第三章", q:"选择和组织体育与健康课程内容？"},
+  {id:989, sub:"学校体育学", type:"大题", chap:"第三章", q:"选择体育与健康课程内容？"},
+  {id:990, sub:"学校体育学", type:"大题", chap:"第三章", q:"选择体育与健康课程内容的依据？"},
+  {id:991, sub:"学校体育学", type:"大题", chap:"第三章", q:"组织体育与健康课程内容的原则？"},
+  {id:992, sub:"学校体育学", type:"大题", chap:"第三章", q:"体育与健康课程的实施？"},
+  {id:993, sub:"学校体育学", type:"大题", chap:"第三章", q:"体育与健康课程实施的取向？"},
+  {id:994, sub:"学校体育学", type:"大题", chap:"第三章", q:"影响体育与健康课程实施的因素？"},
+  {id:995, sub:"学校体育学", type:"大题", chap:"第三章", q:"体育与健康课程实施的阶段？"},
+  {id:996, sub:"学校体育学", type:"大题", chap:"第三章", q:"体育与健康评价的内容与办法？"},
+  {id:997, sub:"学校体育学", type:"大题", chap:"第三章", q:"学生体育与健康课程的学习评价？"},
+  {id:998, sub:"学校体育学", type:"大题", chap:"第三章", q:"体育教师体育与健康课程的评价？"},
+  {id:999, sub:"学校体育学", type:"大题", chap:"第三章", q:"课程建设评价？"},
+  {id:1000, sub:"学校体育学", type:"大题", chap:"第四章", q:"教学的有效性 （有效果有效益有效率）？"},
+  {id:1001, sub:"学校体育学", type:"大题", chap:"第四章", q:"体育教学的特征？"},
+  {id:1002, sub:"学校体育学", type:"大题", chap:"第四章", q:"体育教学的基本要素及其实施要求？"},
+  {id:1003, sub:"学校体育学", type:"大题", chap:"第四章", q:"体育教学的基本要素？"},
+  {id:1004, sub:"学校体育学", type:"大题", chap:"第四章", q:"体育教学基本要素的实施要求？"},
+  {id:1005, sub:"学校体育学", type:"大题", chap:"第四章", q:"师生关系的建立？"},
+  {id:1006, sub:"学校体育学", type:"大题", chap:"第四章", q:"体育教学目标的制订？"},
+  {id:1007, sub:"学校体育学", type:"大题", chap:"第四章", q:"体育教学内容的选择？"},
+  {id:1008, sub:"学校体育学", type:"大题", chap:"第四章", q:"体育教学方法和手段的选择？"},
+  {id:1009, sub:"学校体育学", type:"大题", chap:"第四章", q:"体育教学环境的创设？"},
+  {id:1010, sub:"学校体育学", type:"大题", chap:"第四章", q:"体育教学评价的实施？"},
+  {id:1011, sub:"学校体育学", type:"大题", chap:"第四章", q:"体育教学组织管理的内容？"},
+  {id:1012, sub:"学校体育学", type:"大题", chap:"第四章", q:"教学主体管理的技巧？"},
+  {id:1013, sub:"学校体育学", type:"大题", chap:"第四章", q:"1.教师的站位艺术？"},
+  {id:1014, sub:"学校体育学", type:"大题", chap:"第四章", q:"2.学生学习行为的管理技巧？"},
+  {id:1015, sub:"学校体育学", type:"大题", chap:"第四章", q:"教学活动组织管理的形式？"},
+  {id:1016, sub:"学校体育学", type:"大题", chap:"第四章", q:"场地器材的选择与布置方法？"},
+  {id:1017, sub:"学校体育学", type:"大题", chap:"第四章", q:"体育教学的基本规范的内容要求？"},
+  {id:1018, sub:"学校体育学", type:"大题", chap:"第五章", q:"课外体育活动的特点？"},
+  {id:1019, sub:"学校体育学", type:"大题", chap:"第五章", q:"课外体育活动的功能？"},
+  {id:1020, sub:"学校体育学", type:"大题", chap:"第五章", q:"课外体育活动的内容？"},
+  {id:1021, sub:"学校体育学", type:"大题", chap:"第五章", q:"课外体育活动的组织形式？"},
+  {id:1022, sub:"学校体育学", type:"大题", chap:"第五章", q:"校内和校外？"},
+  {id:1023, sub:"学校体育学", type:"大题", chap:"第五章", q:"课外体育活动的计划制定与实施？"},
+  {id:1024, sub:"学校体育学", type:"大题", chap:"第五章", q:"课外体育活动计划的制订？"},
+  {id:1025, sub:"学校体育学", type:"大题", chap:"第五章", q:"课外体育活动的实施？"},
+  {id:1026, sub:"学校体育学", type:"大题", chap:"第五章", q:"课余体育锻炼的目标和功能？"},
+  {id:1027, sub:"学校体育学", type:"大题", chap:"第五章", q:"学校课余体育训练的主要组织形式？"},
+  {id:1028, sub:"学校体育学", type:"大题", chap:"第五章", q:"学校课余体育训练的特点？"},
+  {id:1029, sub:"学校体育学", type:"大题", chap:"第五章", q:"学校课余体育训练学生运动员的特点？"},
+  {id:1030, sub:"学校体育学", type:"大题", chap:"第五章", q:"学校课余体育训练的实施方法？"},
+  {id:1031, sub:"学校体育学", type:"大题", chap:"第五章", q:"学校课余体育竞赛的功能？"},
+  {id:1032, sub:"学校体育学", type:"大题", chap:"第五章", q:"学校课余体育竞赛的类型？"},
+  {id:1033, sub:"学校体育学", type:"大题", chap:"第五章", q:"学校课余体育竞赛的特点？"},
+  {id:1034, sub:"学校体育学", type:"大题", chap:"第五章", q:"学校课余体育竞赛的实施方法？"},
+  {id:1035, sub:"学校体育学", type:"大题", chap:"第五章", q:"学校课余体育竞赛的组织原则？"},
+  {id:1036, sub:"学校体育学", type:"大题", chap:"第五章", q:"学校课余体育竞赛计划？"},
+  {id:1037, sub:"学校体育学", type:"大题", chap:"第五章", q:"学校课余体育竞赛的方法？"},
+  {id:1038, sub:"学校体育学", type:"大题", chap:"第七章", q:"学校体育文化建设的内容？"},
+  {id:1039, sub:"学校体育学", type:"大题", chap:"第七章", q:"学校体育文化建设的特征？"},
+  {id:1040, sub:"学校体育学", type:"大题", chap:"第七章", q:"学校体育文化建设的功能？"},
+  {id:1041, sub:"学校体育学", type:"大题", chap:"第七章", q:"学校体育文化建设的目标？"},
+  {id:1042, sub:"学校体育学", type:"大题", chap:"第七章", q:"学校体育文化建设的原则？"},
+  {id:1043, sub:"学校体育学", type:"大题", chap:"第七章", q:"学校体育文化建设的方式？"},
+  {id:1044, sub:"学校体育学", type:"大题", chap:"第七章", q:"1. 学校体育精神文化建设方式？"},
+  {id:1045, sub:"学校体育学", type:"大题", chap:"第七章", q:"2. 学校体育制度文化建设方式？"},
+  {id:1046, sub:"学校体育学", type:"大题", chap:"第七章", q:"3. 学校体育行为文化建设方式？"},
+  {id:1047, sub:"学校体育学", type:"大题", chap:"第七章", q:"4. 学校体育物质文化建设方式？"},
+  {id:1048, sub:"学校体育学", type:"大题", chap:"第八章", q:"学校体育管理体制与职能？"},
+  {id:1049, sub:"学校体育学", type:"大题", chap:"第八章", q:"，教育行政部门学校体育管理机构及职能？"},
+  {id:1050, sub:"学校体育学", type:"大题", chap:"第八章", q:"，体育行政部门学校体育管理机构及职能？"},
+  {id:1051, sub:"学校体育学", type:"大题", chap:"第八章", q:"国家体育青年处？"},
+  {id:1052, sub:"学校体育学", type:"大题", chap:"第八章", q:"省级"},
+  {id:1053, sub:"学校体育学", type:"大题", chap:"第八章", q:"，学校内部体育管理机构及及职？"},
+  {id:1054, sub:"学校体育学", type:"大题", chap:"第八章", q:"体育处"},
+  {id:1055, sub:"学校体育学", type:"大题", chap:"第八章", q:"体育教研部？"},
+  {id:1056, sub:"学校体育学", type:"大题", chap:"第八章", q:"体育教师？"},
+  {id:1057, sub:"学校体育学", type:"大题", chap:"第八章", q:"学校体育管理的内容？"},
+  {id:1058, sub:"学校体育学", type:"大题", chap:"第八章", q:"体育教学管理的主要内容？"},
+  {id:1059, sub:"学校体育学", type:"大题", chap:"第八章", q:"课外体育活动管理？"},
+  {id:1060, sub:"学校体育学", type:"大题", chap:"第八章", q:"学校体育设施管理？"},
+  {id:1061, sub:"学校体育学", type:"大题", chap:"第八章", q:"学校体育风险管理？"},
+  {id:1062, sub:"学校体育学", type:"大题", chap:"第八章", q:"1.学校体育风险管理的界定？"},
+  {id:1063, sub:"学校体育学", type:"大题", chap:"第八章", q:"2.学校体育风险的发生因素？"},
+  {id:1064, sub:"学校体育学", type:"大题", chap:"第八章", q:"3.学校体育风险的防控？"},
+  {id:1065, sub:"学校体育学", type:"大题", chap:"第八章", q:"学校体育管理目标？"},
+  {id:1066, sub:"学校体育学", type:"大题", chap:"第八章", q:"学校体育管理计划的内容？"},
+  {id:1067, sub:"学校体育学", type:"大题", chap:"第八章", q:"学校体育管理办法？"},
+  {id:1068, sub:"学校体育学", type:"大题", chap:"第九章", q:"学校体育运动伤害事故的概念和类型？"},
+  {id:1069, sub:"学校体育学", type:"大题", chap:"第九章", q:"学校体育运动伤害事故的成因？"},
+  {id:1070, sub:"学校体育学", type:"大题", chap:"第九章", q:"学校体育运动伤害事故的法律责任？"},
+  {id:1071, sub:"学校体育学", type:"大题", chap:"第九章", q:"体育运动中学校应承担的主要法律义务？"},
+  {id:1072, sub:"学校体育学", type:"大题", chap:"第九章", q:"学校体育运动伤害事故的法律规则？"},
+  {id:1073, sub:"学校体育学", type:"大题", chap:"第九章", q:"学校体育运动伤害风险的防范工作？"},
+  {id:1074, sub:"学校体育学", type:"大题", chap:"第九章", q:"学校体育运动安全管理制度？"},
+  {id:1075, sub:"学校体育学", type:"大题", chap:"第九章", q:"学校体育场馆设施器材的安全防范？"},
+  {id:1076, sub:"学校体育学", type:"大题", chap:"第九章", q:"体育教育教学活动中的安全防范？"},
+  {id:1077, sub:"学校体育学", type:"大题", chap:"第九章", q:"学校体育运动伤害事故的应急处理？"},
+  {id:1078, sub:"学校体育学", type:"大题", chap:"第10章", q:"学校体育政策法规的历史演变？"},
+  {id:1079, sub:"学校体育学", type:"大题", chap:"第10章", q:"1902到1948 1949到1977 1978到2019？"},
+  {id:1080, sub:"学校体育学", type:"大题", chap:"第10章", q:"学校体育政策法规的作用？"},
+  {id:1081, sub:"学校体育学", type:"大题", chap:"第10章", q:"当前学校体育的主要政策法规？"},
+  {id:1082, sub:"学校体育学", type:"大题", chap:"第10章", q:"学校体育领域的法律法规？"},
+  {id:1083, sub:"学校体育学", type:"大题", chap:"第10章", q:"学校体育领域，中共中央国务院文件？"},
+  {id:1084, sub:"学校体育学", type:"大题", chap:"第10章", q:"学校体育领域，教育部等有关部委文件？"},
+  {id:1085, sub:"学校体育学", type:"大题", chap:"第11章", q:"学校体育工作督导评估的类型原则和功能？"},
+  {id:1086, sub:"学校体育学", type:"大题", chap:"第11章", q:"学校体育工作督导评估指标体系？"},
+  {id:1087, sub:"学校体育学", type:"大题", chap:"第11章", q:"学校体育工作督导评估指标体系构件的依据及内容？"},
+  {id:1088, sub:"学校体育学", type:"大题", chap:"第11章", q:"学校体育工作督导评估的实施？"},
+  {id:1089, sub:"学校体育学", type:"大题", chap:"第11章", q:"学校体育督政的实施？"},
+  {id:1090, sub:"学校体育学", type:"大题", chap:"第11章", q:"，学校体育督学的实施？"},
+  {id:1091, sub:"学校体育学", type:"大题", chap:"第11章", q:"学校体育评估监测的实施？"},
+  {id:1092, sub:"学校体育学", type:"大题", chap:"第12章", q:"体育教师工作的特点？"},
+  {id:1093, sub:"学校体育学", type:"大题", chap:"第12章", q:"体育教师的工作任务？"},
+  {id:1094, sub:"学校体育学", type:"大题", chap:"第12章", q:"体育教师的职业素养？"},
+  {id:1095, sub:"学校体育学", type:"大题", chap:"第12章", q:"体育教师专业发展的内涵？"},
+  {id:1096, sub:"学校体育学", type:"大题", chap:"第12章", q:"体育教师专业发展的阶段划分及特征？"},
+  {id:1097, sub:"学校体育学", type:"大题", chap:"第12章", q:"体育教师专业发展的途径？"},
+  {id:1098, sub:"学校体育学", type:"名词解释", chap:"", q:"体育理论"},
+  {id:1099, sub:"学校体育学", type:"名词解释", chap:"", q:"报告"},
+  {id:1100, sub:"学校体育学", type:"名词解释", chap:"", q:"1981年学校体育学出版"},
+  {id:1101, sub:"学校体育学", type:"名词解释", chap:"", q:"3+x 理论课程"},
+  {id:1102, sub:"学校体育学", type:"名词解释", chap:"", q:"骑士七技"},
+  {id:1103, sub:"学校体育学", type:"名词解释", chap:"", q:"弗吉里奥"},
+  {id:1104, sub:"学校体育学", type:"名词解释", chap:"", q:"通才教育"},
+  {id:1105, sub:"学校体育学", type:"名词解释", chap:"", q:"维多利诺"},
+  {id:1106, sub:"学校体育学", type:"名词解释", chap:"", q:"蒙田"},
+  {id:1107, sub:"学校体育学", type:"名词解释", chap:"", q:"夸美纽斯"},
+  {id:1108, sub:"学校体育学", type:"名词解释", chap:"", q:"卢梭"},
+  {id:1109, sub:"学校体育学", type:"名词解释", chap:"", q:"斯宾塞"},
+  {id:1110, sub:"学校体育学", type:"名词解释", chap:"", q:"杜威"},
+  {id:1111, sub:"学校体育学", type:"名词解释", chap:"", q:"巴泽多"},
+  {id:1112, sub:"学校体育学", type:"名词解释", chap:"", q:"古茨穆茨"},
+  {id:1113, sub:"学校体育学", type:"名词解释", chap:"", q:"杨氏体操"},
+  {id:1114, sub:"学校体育学", type:"名词解释", chap:"", q:"六艺"},
+  {id:1115, sub:"学校体育学", type:"名词解释", chap:"", q:"奏定学堂章程（葵某学制）"},
+  {id:1116, sub:"学校体育学", type:"名词解释", chap:"", q:"壬子学制（学校系统改革令）"},
+  {id:1117, sub:"学校体育学", type:"名词解释", chap:"", q:"劳卫制"},
+  {id:1118, sub:"学校体育学", type:"名词解释", chap:"", q:"草案全日制中学暂定工作条例"},
+  {id:1119, sub:"学校体育学", type:"名词解释", chap:"", q:"十八届三中全会"},
+  {id:1120, sub:"学校体育学", type:"名词解释", chap:"", q:"军国民教育思想"},
+  {id:1121, sub:"学校体育学", type:"名词解释", chap:"", q:"自然主义体育思想"},
+  {id:1122, sub:"学校体育学", type:"名词解释", chap:"", q:"体质教育思想"},
+  {id:1123, sub:"学校体育学", type:"名词解释", chap:"", q:"终身体育思想"},
+  {id:1124, sub:"学校体育学", type:"名词解释", chap:"", q:"健康第一思想"},
+  {id:1125, sub:"学校体育学", type:"名词解释", chap:"", q:"体育课程结构"},
+  {id:1126, sub:"学校体育学", type:"名词解释", chap:"", q:"课外体育活动"},
+  {id:1127, sub:"学校体育学", type:"名词解释", chap:"", q:"课余体育竞赛"},
+  {id:1128, sub:"学校体育学", type:"名词解释", chap:"", q:"课余体育训练"},
+  {id:1129, sub:"学校体育学", type:"名词解释", chap:"", q:"体育与健康课程"},
+  {id:1130, sub:"学校体育学", type:"名词解释", chap:"", q:"运动能力"},
+  {id:1131, sub:"学校体育学", type:"名词解释", chap:"", q:"健康行为"},
+  {id:1132, sub:"学校体育学", type:"名词解释", chap:"", q:"体育品德"},
+  {id:1133, sub:"学校体育学", type:"名词解释", chap:"", q:"体育精神"},
+  {id:1134, sub:"学校体育学", type:"名词解释", chap:"", q:"体育品格"},
+  {id:1135, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育的目标"},
+  {id:1136, sub:"学校体育学", type:"名词解释", chap:"", q:"全面发展"},
+  {id:1137, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育"},
+  {id:1138, sub:"学校体育学", type:"名词解释", chap:"", q:"德育"},
+  {id:1139, sub:"学校体育学", type:"名词解释", chap:"", q:"智育"},
+  {id:1140, sub:"学校体育学", type:"名词解释", chap:"", q:"体育"},
+  {id:1141, sub:"学校体育学", type:"名词解释", chap:"", q:"美育"},
+  {id:1142, sub:"学校体育学", type:"名词解释", chap:"", q:"劳育"},
+  {id:1143, sub:"学校体育学", type:"名词解释", chap:"", q:"体教融合"},
+  {id:1144, sub:"学校体育学", type:"名词解释", chap:"", q:"体育与健康课程"},
+  {id:1145, sub:"学校体育学", type:"名词解释", chap:"", q:"体育与健康课程编制"},
+  {id:1146, sub:"学校体育学", type:"名词解释", chap:"", q:"体育学科逻辑"},
+  {id:1147, sub:"学校体育学", type:"名词解释", chap:"", q:"体育与健康课程编制的逻辑"},
+  {id:1148, sub:"学校体育学", type:"名词解释", chap:"", q:"体育与健康编制的学科基础"},
+  {id:1149, sub:"学校体育学", type:"名词解释", chap:"", q:"运动认知"},
+  {id:1150, sub:"学校体育学", type:"名词解释", chap:"", q:"正迁移"},
+  {id:1151, sub:"学校体育学", type:"名词解释", chap:"", q:"负迁移"},
+  {id:1152, sub:"学校体育学", type:"名词解释", chap:"", q:"教育学"},
+  {id:1153, sub:"学校体育学", type:"名词解释", chap:"", q:"整体教育论"},
+  {id:1154, sub:"学校体育学", type:"名词解释", chap:"", q:"情意教育论"},
+  {id:1155, sub:"学校体育学", type:"名词解释", chap:"", q:"社会学"},
+  {id:1156, sub:"学校体育学", type:"名词解释", chap:"", q:"学生心理逻辑"},
+  {id:1157, sub:"学校体育学", type:"名词解释", chap:"", q:"体育教学逻辑"},
+  {id:1158, sub:"学校体育学", type:"名词解释", chap:"", q:"个体社会化"},
+  {id:1159, sub:"学校体育学", type:"名词解释", chap:"", q:"社会文化"},
+  {id:1160, sub:"学校体育学", type:"名词解释", chap:"", q:"体育与健康课程目标"},
+  {id:1161, sub:"学校体育学", type:"名词解释", chap:"", q:"连续性原则"},
+  {id:1162, sub:"学校体育学", type:"名词解释", chap:"", q:"顺序性原则"},
+  {id:1163, sub:"学校体育学", type:"名词解释", chap:"", q:"整合性原则"},
+  {id:1164, sub:"学校体育学", type:"名词解释", chap:"", q:"体育与将康课程实施"},
+  {id:1165, sub:"学校体育学", type:"名词解释", chap:"", q:"体育与健康实施的取向"},
+  {id:1166, sub:"学校体育学", type:"名词解释", chap:"", q:"体育与健康课程的评价"},
+  {id:1167, sub:"学校体育学", type:"名词解释", chap:"", q:"忠实取向"},
+  {id:1168, sub:"学校体育学", type:"名词解释", chap:"", q:"相互适应取向"},
+  {id:1169, sub:"学校体育学", type:"名词解释", chap:"", q:"创生取向"},
+  {id:1170, sub:"学校体育学", type:"名词解释", chap:"", q:"运动技能正迁移"},
+  {id:1171, sub:"学校体育学", type:"名词解释", chap:"", q:"运动技能负迁移"},
+  {id:1172, sub:"学校体育学", type:"名词解释", chap:"", q:"体育与健康课程内容"},
+  {id:1173, sub:"学校体育学", type:"名词解释", chap:"", q:"教学"},
+  {id:1174, sub:"学校体育学", type:"名词解释", chap:"", q:"体育教学"},
+  {id:1175, sub:"学校体育学", type:"名词解释", chap:"", q:"体育教学目标"},
+  {id:1176, sub:"学校体育学", type:"名词解释", chap:"", q:"体育教学内容"},
+  {id:1177, sub:"学校体育学", type:"名词解释", chap:"", q:"体育教学方法和手段"},
+  {id:1178, sub:"学校体育学", type:"名词解释", chap:"", q:"体育教学环境"},
+  {id:1179, sub:"学校体育学", type:"名词解释", chap:"", q:"体育教学评价"},
+  {id:1180, sub:"学校体育学", type:"名词解释", chap:"", q:"分组教学"},
+  {id:1181, sub:"学校体育学", type:"名词解释", chap:"", q:"教学主题的管理"},
+  {id:1182, sub:"学校体育学", type:"名词解释", chap:"", q:"场地器材的选择与布置"},
+  {id:1183, sub:"学校体育学", type:"名词解释", chap:"", q:"同质分组"},
+  {id:1184, sub:"学校体育学", type:"名词解释", chap:"", q:"异质分组"},
+  {id:1185, sub:"学校体育学", type:"名词解释", chap:"", q:"友情分组"},
+  {id:1186, sub:"学校体育学", type:"名词解释", chap:"", q:"个别教学"},
+  {id:1187, sub:"学校体育学", type:"名词解释", chap:"", q:"体育教学基本规范 体育教学常规"},
+  {id:1188, sub:"学校体育学", type:"名词解释", chap:"", q:"学校课外体育活动"},
+  {id:1189, sub:"学校体育学", type:"名词解释", chap:"", q:"个人体育锻炼"},
+  {id:1190, sub:"学校体育学", type:"名词解释", chap:"", q:"早操"},
+  {id:1191, sub:"学校体育学", type:"名词解释", chap:"", q:"体育节"},
+  {id:1192, sub:"学校体育学", type:"名词解释", chap:"", q:"家庭体育"},
+  {id:1193, sub:"学校体育学", type:"名词解释", chap:"", q:"社区体育"},
+  {id:1194, sub:"学校体育学", type:"名词解释", chap:"", q:"全校性活动计划"},
+  {id:1195, sub:"学校体育学", type:"名词解释", chap:"", q:"年级性活动计划"},
+  {id:1196, sub:"学校体育学", type:"名词解释", chap:"", q:"班级活动计划"},
+  {id:1197, sub:"学校体育学", type:"名词解释", chap:"", q:"体育俱乐部活动计划"},
+  {id:1198, sub:"学校体育学", type:"名词解释", chap:"", q:"个人体育锻炼计划"},
+  {id:1199, sub:"学校体育学", type:"名词解释", chap:"", q:"学校课余体育训练"},
+  {id:1200, sub:"学校体育学", type:"名词解释", chap:"", q:"学生运动员"},
+  {id:1201, sub:"学校体育学", type:"名词解释", chap:"", q:"年度训练计划"},
+  {id:1202, sub:"学校体育学", type:"名词解释", chap:"", q:"周训练计划"},
+  {id:1203, sub:"学校体育学", type:"名词解释", chap:"", q:"课时训练计划"},
+  {id:1204, sub:"学校体育学", type:"名词解释", chap:"", q:"阶段训练计划"},
+  {id:1205, sub:"学校体育学", type:"名词解释", chap:"", q:"校内竞赛"},
+  {id:1206, sub:"学校体育学", type:"名词解释", chap:"", q:"运动会"},
+  {id:1207, sub:"学校体育学", type:"名词解释", chap:"", q:"表演赛"},
+  {id:1208, sub:"学校体育学", type:"名词解释", chap:"", q:"选拔赛"},
+  {id:1209, sub:"学校体育学", type:"名词解释", chap:"", q:"友谊赛"},
+  {id:1210, sub:"学校体育学", type:"名词解释", chap:"", q:"周期赛"},
+  {id:1211, sub:"学校体育学", type:"名词解释", chap:"", q:"竞赛规程"},
+  {id:1212, sub:"学校体育学", type:"名词解释", chap:"", q:"年度竞赛日程计划"},
+  {id:1213, sub:"学校体育学", type:"名词解释", chap:"", q:"体机战心知"},
+  {id:1214, sub:"学校体育学", type:"名词解释", chap:"", q:"淘汰法"},
+  {id:1215, sub:"学校体育学", type:"名词解释", chap:"", q:"循环法"},
+  {id:1216, sub:"学校体育学", type:"名词解释", chap:"", q:"轮换法"},
+  {id:1217, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育文化"},
+  {id:1218, sub:"学校体育学", type:"名词解释", chap:"", q:"文化"},
+  {id:1219, sub:"学校体育学", type:"名词解释", chap:"", q:"体育文化"},
+  {id:1220, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育精神"},
+  {id:1221, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育精神文化"},
+  {id:1222, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育制度文化"},
+  {id:1223, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育行为文化"},
+  {id:1224, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育物质文化"},
+  {id:1225, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育文化建设目标"},
+  {id:1226, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育文化建设的特征"},
+  {id:1227, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育文化建设的功能"},
+  {id:1228, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育文化建设的原则"},
+  {id:1229, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育文化建设的方式"},
+  {id:1230, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育理念"},
+  {id:1231, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育精神"},
+  {id:1232, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育道德风尚"},
+  {id:1233, sub:"学校体育学", type:"名词解释", chap:"", q:"体育价值观"},
+  {id:1234, sub:"学校体育学", type:"名词解释", chap:"", q:"体育组织机构"},
+  {id:1235, sub:"学校体育学", type:"名词解释", chap:"", q:"体育传统与风气"},
+  {id:1236, sub:"学校体育学", type:"名词解释", chap:"", q:"校园体育活动"},
+  {id:1237, sub:"学校体育学", type:"名词解释", chap:"", q:"体育媒介"},
+  {id:1238, sub:"学校体育学", type:"名词解释", chap:"", q:"外显学习"},
+  {id:1239, sub:"学校体育学", type:"名词解释", chap:"", q:"内隐学习"},
+  {id:1240, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育管理"},
+  {id:1241, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育管理体制"},
+  {id:1242, sub:"学校体育学", type:"名词解释", chap:"", q:"国家体育总局"},
+  {id:1243, sub:"学校体育学", type:"名词解释", chap:"", q:"体育教学质量评估"},
+  {id:1244, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育设施"},
+  {id:1245, sub:"学校体育学", type:"名词解释", chap:"", q:"风险管理"},
+  {id:1246, sub:"学校体育学", type:"名词解释", chap:"", q:"风险识别"},
+  {id:1247, sub:"学校体育学", type:"名词解释", chap:"", q:"风险评估"},
+  {id:1248, sub:"学校体育学", type:"名词解释", chap:"", q:"风险实施手段"},
+  {id:1249, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育管理办法"},
+  {id:1250, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育馆里的总目标"},
+  {id:1251, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育管理计划"},
+  {id:1252, sub:"学校体育学", type:"名词解释", chap:"", q:"学年体育工作计划"},
+  {id:1253, sub:"学校体育学", type:"名词解释", chap:"", q:"体育教学工作计划"},
+  {id:1254, sub:"学校体育学", type:"名词解释", chap:"", q:"运动竞赛"},
+  {id:1255, sub:"学校体育学", type:"名词解释", chap:"", q:"法规制度管理法"},
+  {id:1256, sub:"学校体育学", type:"名词解释", chap:"", q:"过程管理法"},
+  {id:1257, sub:"学校体育学", type:"名词解释", chap:"", q:"行政管理法"},
+  {id:1258, sub:"学校体育学", type:"名词解释", chap:"", q:"目标管理法"},
+  {id:1259, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育运动伤害事故"},
+  {id:1260, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育政策法规"},
+  {id:1261, sub:"学校体育学", type:"名词解释", chap:"", q:"中华人民共和国体育法"},
+  {id:1262, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育工作条例"},
+  {id:1263, sub:"学校体育学", type:"名词解释", chap:"", q:"中央7号文件"},
+  {id:1264, sub:"学校体育学", type:"名词解释", chap:"", q:"决定"},
+  {id:1265, sub:"学校体育学", type:"名词解释", chap:"", q:"阳光体育运动"},
+  {id:1266, sub:"学校体育学", type:"名词解释", chap:"", q:"国家学生体质健康标准"},
+  {id:1267, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育工作督导评估"},
+  {id:1268, sub:"学校体育学", type:"名词解释", chap:"", q:"相对评估"},
+  {id:1269, sub:"学校体育学", type:"名词解释", chap:"", q:"个体差异评估"},
+  {id:1270, sub:"学校体育学", type:"名词解释", chap:"", q:"自我评估"},
+  {id:1271, sub:"学校体育学", type:"名词解释", chap:"", q:"都正评估"},
+  {id:1272, sub:"学校体育学", type:"名词解释", chap:"", q:"督学评估"},
+  {id:1273, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育工作督导评估指标体系"},
+  {id:1274, sub:"学校体育学", type:"名词解释", chap:"", q:"体育教师的专业发展"},
+  {id:1275, sub:"学校体育学", type:"名词解释", chap:"", q:"教师专业化"},
+  {id:1276, sub:"学校体育学", type:"名词解释", chap:"", q:"教师专业发展"},
+  {id:1277, sub:"学校体育学", type:"名词解释", chap:"", q:"体育教师"},
+  {id:1278, sub:"学校体育学", type:"名词解释", chap:"", q:"学历教育"},
+  {id:1279, sub:"学校体育学", type:"名词解释", chap:"", q:"素质教育"},
+  {id:1280, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育功能"},
+  {id:1281, sub:"学校体育学", type:"名词解释", chap:"", q:"学校体育"},
+  {id:1282, sub:"学校体育学", type:"名词解释", chap:"", q:"体育之研究"},
+  {id:1283, sub:"学校体育学", type:"名词解释", chap:"", q:"新体育学书"},
+  {id:1284, sub:"学校体育学", type:"名词解释", chap:"", q:"社区体育"},
+  {id:1285, sub:"学校体育学", type:"名词解释", chap:"", q:"学科课程"},
+  {id:1286, sub:"学校体育学", type:"名词解释", chap:"", q:"活动课程"},
+  {id:1287, sub:"学校体育学", type:"名词解释", chap:"", q:"隐性课程"},
+  {id:1288, sub:"学校体育学", type:"名词解释", chap:"", q:"显性课程"},
+  {id:1289, sub:"学校体育学", type:"名词解释", chap:"", q:"体育教学过程"},
+  {id:1290, sub:"学校体育学", type:"名词解释", chap:"", q:"体育教学原则"},
+  {id:1291, sub:"学校体育学", type:"名词解释", chap:"", q:"大单元教学"},
+  {id:1292, sub:"学校体育学", type:"名词解释", chap:"", q:"体育教学设计"}
+];
+// Total: 1293 questions
+
+
+
+let selectedSubjects = ["运动训练学","运动生理学","学校体育学"];
+let selectedTypes = ["大题","名词解释"];
+let doneIds = new Set(JSON.parse(localStorage.getItem('quizDone') || '[]'));
+let currentQuestion = null;
+
+const subFull = {"训练学":"运动训练学","生理学":"运动生理学","学校体育":"学校体育学"};
+const subColors = {"运动训练学":"#8ab4f8","运动生理学":"#f28b82","学校体育学":"#81c995"};
+
+function countByTypes() {
+  let dati = 0, mingci = 0;
+  for (let q of questions) {
+    if (!selectedSubjects.includes(q.sub)) continue;
+    if (q.type === "大题") dati++;
+    else mingci++;
+  }
+  document.getElementById('count-dati').textContent = dati;
+  document.getElementById('count-mingci').textContent = mingci;
+}
+
+function getFiltered() {
+  return questions.filter(q => 
+    selectedSubjects.includes(q.sub) && selectedTypes.includes(q.type)
+  );
+}
+
+function updateTotalCount() {
+  const pool = getFiltered();
+  const doneInPool = pool.filter(q => doneIds.has(q.id)).length;
+  document.getElementById('totalCount').textContent = pool.length;
+  document.getElementById('poolCount').textContent = pool.length;
+  document.getElementById('doneCount').textContent = doneInPool;
+  const pct = pool.length > 0 ? Math.min(100, (doneInPool / pool.length * 100)) : 0;
+  document.getElementById('progressBar').style.width = pct.toFixed(1) + '%';
+  const btn = document.getElementById('btnNext');
+  if (pool.length > 0 && doneInPool >= pool.length) {
+    btn.textContent = '🏆 全部完成！';
+  } else {
+    btn.textContent = '🎲 随机一题';
+  }
+}
+
+function toggleSub(el) {
+  const label = el.dataset.sub;
+  const full = subFull[label];
+  el.classList.toggle('active');
+  selectedSubjects = [...document.querySelectorAll('[data-sub].active')].map(e => subFull[e.dataset.sub]);
+  if (selectedSubjects.length === 0) {
+    el.classList.add('active');
+    selectedSubjects = [full];
+  }
+  countByTypes(); updateTotalCount(); resetDisplay();
+}
+
+function toggleType(el) {
+  el.classList.toggle('active');
+  selectedTypes = [...document.querySelectorAll('[data-type].active')].map(e => e.dataset.type);
+  if (selectedTypes.length === 0) {
+    el.classList.add('active');
+    selectedTypes = [el.dataset.type];
+  }
+  countByTypes(); updateTotalCount(); resetDisplay();
+}
+
+function resetDisplay() {
+  currentQuestion = null;
+  document.getElementById('badgeSub').textContent = '-';
+  document.getElementById('badgeType').textContent = '-';
+  document.getElementById('badgeChap').textContent = '-';
+  document.getElementById('badgeId').textContent = '#0';
+  document.getElementById('cardBody').innerHTML = '<div class="empty-text">已切换筛选条件，继续训练 💪</div>';
+}
+
+function nextQuestion() {
+  let pool = getFiltered();
+  if (pool.length === 0) {
+    document.getElementById('cardBody').innerHTML = '<div class="empty-text">当前筛选没有题目，调整一下 🎯</div>';
+    return;
+  }
+  const remaining = pool.filter(q => !doneIds.has(q.id));
+  if (remaining.length === 0) {
+    document.getElementById('cardBody').innerHTML = '<div class="empty-text" style="font-size:20px;line-height:2;color:#ffcc80;">🏆🏆🏆 太强了！<br>当前题库全部通关！<br><br>换个科目继续 <span style="font-size:24px;">🔥</span></div>';
+    document.getElementById('btnNext').textContent = '🏆 全部完成！';
+    document.getElementById('progressBar').style.width = '100%';
+    return;
+  }
+  const idx = Math.floor(Math.random() * remaining.length);
+  currentQuestion = remaining[idx];
+  doneIds.add(currentQuestion.id);
+  localStorage.setItem('quizDone', JSON.stringify([...doneIds]));
+
+  document.getElementById('cardBody').innerHTML = '<div class="question-text fade-in">' + currentQuestion.q + '</div>';
+  document.getElementById('badgeSub').textContent = currentQuestion.sub;
+  const c = subColors[currentQuestion.sub] || '#888';
+  document.getElementById('badgeSub').style.background = c + '22';
+  document.getElementById('badgeSub').style.color = c;
+  document.getElementById('badgeType').textContent = currentQuestion.type;
+  document.getElementById('badgeChap').textContent = currentQuestion.chap || '通用';
+  document.getElementById('badgeId').textContent = '#' + (doneIds.size);
+  updateTotalCount();
+}
+
+function clearDone() {
+  if (!confirm('确定重置所有进度吗？')) return;
+  doneIds.clear();
+  localStorage.removeItem('quizDone');
+  currentQuestion = null;
+  document.getElementById('cardBody').innerHTML = '<div class="empty-text">进度已重置，重新起跑 🏃</div>';
+  updateTotalCount();
+  document.getElementById('btnNext').textContent = '🎲 随机一题';
+}
+
+document.addEventListener('keydown', function(e) {
+  if (e.key === ' ' || e.key === 'Enter') {
+    e.preventDefault();
+    nextQuestion();
+  }
+});
+
+countByTypes();
+updateTotalCount();
+if (doneIds.size > 0) {
+  const pool = getFiltered();
+  const doneInPool = pool.filter(function(q) { return doneIds.has(q.id); }).length;
+  document.getElementById('cardBody').innerHTML = '<div class="empty-text">上次训练到第 ' + doneInPool + ' 题，继续 💪</div>';
+}
+</script>
+</body>
+</html>
